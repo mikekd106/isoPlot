@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+text {
+  font: 10px sans-serif;
+}
+
+</style>
+<body>
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+	const svg_width = 1000,svg_height = 800;
+	var json = Array();
+	var svgContainer = d3.select("body")
+							.append("svg")
+							.attr("width",svg_width)
+							.attr("height",svg_height);
+	d3.json("testData.json",function(error,data){
+		if (error) throw error;
+		var count = 0;
+		for(var i in data){
+			drawOneTranscript(data[i],svgContainer,count++)
+		}
+
+	});
+	// function myFunction(text) {
+	//     var h = document.createElement("H1");
+	//     var t = document.createTextNode(text);
+	//     h.appendChild(t);
+	//     document.body.appendChild(h);
+	// }
+						
+	function drawOneTranscript(oneTranscript,svgContainer,count){
+		const line_length = 800, rect_height = 20;
+		var y_coor = 200 + 30 * count;
+		var color = d3.scaleOrdinal(d3.schemeCategory20b);
+		var transcript_id = oneTranscript["transcript_id"],
+			start_pos = oneTranscript["start"],
+			end_pos = oneTranscript["end"];
+		
+		var exonArray = oneTranscript["exons"],
+			utrArray = oneTranscript["UTR"],
+			cdsArray = oneTranscript["CDS"];
+
+		var axisScale = d3.scaleLinear().domain([start_pos,end_pos]).range([0,line_length]);
+		
+		var oneGroup = svgContainer.append("g");
+
+		var line = oneGroup.append("line")
+                		    .attr("x1", axisScale(start_pos))
+		                   .attr("y1", y_coor)
+		                   .attr("x2", axisScale(end_pos))
+		                   .attr("y2", y_coor)
+		                   .attr("stroke-width", 2)
+                           .attr("stroke", "black");
+
+        var exonGroup = oneGroup.append("g");
+        var exons = exonGroup.selectAll("rect")
+									.data(exonArray)
+									.enter()
+									.append("rect");
+		var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
+        						   .attr("y",y_coor - rect_height/2)
+        						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+        						   .attr("height",rect_height)
+        						   .style("fill",function(d){return "#BDA6F9"});
+
+        var utrGroup = oneGroup.append("g");
+        var utrs = utrGroup.selectAll("rect")
+									.data(utrArray)
+									.enter()
+									.append("rect");
+		var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
+        						 .attr("y",y_coor - rect_height/4)
+        						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+        						 .attr("height",rect_height/2)
+        						 .style("fill",function(d){return "#ECA0C3"});
+
+        var cdsGroup = oneGroup.append("g");
+        var cdss = cdsGroup.selectAll("rect")
+									.data(cdsArray)
+									.enter()
+									.append("rect");
+		var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
+        						 .attr("y",y_coor - rect_height/4)
+        						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+        						 .attr("height",rect_height/2)
+        						 .style("fill",function(d){return "#B4C1FF"});
+
+
+
+	}						  
+
+
+</script>
+
+
