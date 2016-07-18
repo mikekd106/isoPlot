@@ -51,22 +51,26 @@ text {
         						   .attr("y",y_coor )
         						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
         						   .attr("height",rect_height)
+        						   .attr("stroke","#615756")
+        						   .attr("stroke-width",2)
+        						   .attr("fill-opacity",0.3)
         						   .style("fill",function(d){return "#BDA6F9"});
+
         
         var svgLineFunction = d3.line()
         						.x(function(d) {return d.x})
         						.y(function(d) {return d.y});
         						
         
-        for(var i in exonArray){
+        
+        for(var i = 0; i<exonArray.length;i++){
 
-        	console.log()
-        	// if (i == (exonArray.length-1))
-        	// 	break;
+        	if (i == (exonArray.length-1))
+        	 	break;
         	var coorArray = Array()
         	coorArray.push(new oneCoor(axisScale(exonArray[i].start),y_coor));
-        	coorArray.push(new oneCoor(axisScale((exonArray[i].start+exonArray[i].end)/2), y_coor-30));
-        	coorArray.push(new oneCoor(axisScale(exonArray[i].end),y_coor));
+        	coorArray.push(new oneCoor(axisScale((exonArray[i].start+exonArray[i+1].start)/2), y_coor-30));
+        	coorArray.push(new oneCoor(axisScale(exonArray[i+1].start),y_coor));
         	var lineGraph = exonGroup.append("path")
                             			.attr("d", svgLineFunction(coorArray))
                             			.attr("stroke", "#539987")
