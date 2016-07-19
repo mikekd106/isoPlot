@@ -84,23 +84,14 @@ function drawOneTranscript(oneTranscript,svgContainer,count){
 		utrArray = oneTranscript["UTR"],
 		cdsArray = oneTranscript["CDS"];
 
-	var axisScale = d3.scaleLinear().domain([start_pos,end_pos]).range([0,line_length]);
-
+	var axisScale = d3.scaleLinear().domain([start_pos,end_pos]).range([10,line_length]);
+	//alert(axisScale(start_pos))
 	var oneTranscriptGroup = svgContainer.append("g");
 	
-	// var toolTip = d3.select("body")
-	// 				.append("div")
-	// 				.style("position", "absolute")
-	// 				.style("z-index", "10")
-	// 				.style("visibility", "hidden")
-	// 				.text("CDS");
-	var tip = d3.tip()
-			  .attr('class', 'd3-tip')
-			  .offset([-10, 0])
-			  .html(function(d) {
-			    return "<strong>CDS:</strong> <span style='color:red'>" + d.start + "</span>";
-			  })
-	svgContainer.call(tip);
+ 	var div = d3.select("body").append("div")
+    			.attr("class", "tooltip")
+    			.style("display", "none");
+
 	//create a line in one transcript
 	var line = oneTranscriptGroup.append("line")
             		    .attr("x1", axisScale(start_pos))
@@ -119,7 +110,10 @@ function drawOneTranscript(oneTranscript,svgContainer,count){
     						   .attr("y",y_coor - rect_height/2)
     						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						   .attr("height",rect_height)
-    						   .style("fill",function(d){return "#BDA6F9"});
+    						   .style("fill",function(d){return "#BDA6F9"})
+    						   .on("mouseover", mouseover)
+						       .on("mousemove", mousemove)
+						       .on("mouseout", mouseout)
     //create UTRs in one transcript
     var utrGroup = oneTranscriptGroup.append("g");
     var utrs = utrGroup.selectAll("rect")
@@ -130,7 +124,10 @@ function drawOneTranscript(oneTranscript,svgContainer,count){
     						 .attr("y",y_coor - rect_height/4)
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						 .attr("height",rect_height/2)
-    						 .style("fill",function(d){return "#ECA0C3"});
+    						 .style("fill",function(d){return "#ECA0C3"})
+    						 .on("mouseover", mouseover)
+						     .on("mousemove", mousemove)
+						     .on("mouseout", mouseout)
     //create CDSs in one transcript						 
     var cdsGroup = oneTranscriptGroup.append("g");
     var cdss = cdsGroup.selectAll("rect")
@@ -142,26 +139,26 @@ function drawOneTranscript(oneTranscript,svgContainer,count){
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						 .attr("height",rect_height/2)
     						 .style("fill",function(d){return "#B4C1FF"})
-    				// 		 .on("mouseover", function(){return toolTip.style("visibility", "visible")})
-							 // .on("mousemove", function(){return toolTip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px")})
-							 // .on("mouseout", function(){return toolTip.style("visibility", "hidden")});
-							 .on('mouseover', tip.show)
-      						 .on('mouseout', tip.hide)
-
-
-
-}						  
-function createTooltip(context){
-	var tooltip = d3.select("body")
-					.append("div")
-					.style("position", "absolute")
-					.style("z-index", "10")
-					.style("visibility", "hidden")
-					.text(context);
+    						 .on("mouseover", mouseover)
+						     .on("mousemove", mousemove)
+						     .on("mouseout", mouseout)
+	function mouseover(){
+		div.style("display", "inline");
+	}
+	function mousemove(){
+		var axisScale2 = d3.scaleLinear().domain([10,line_length]).range([start_pos,end_pos]);
+		//alert(axisScale2(50))
+		div.text(Math.round(axisScale2(d3.event.pageX)))
+			.style("left", (d3.event.pageX - 34) + "px")
+			.style("top", (d3.event.pageY - 50) + "px")
+	}
+	function mouseout(){
+		div.style("display", "none");
+	}
 }
-// function myFunction(text) {
-//     var h = document.createElement("H1");
-//     var t = document.createTextNode(text);
-//     h.appendChild(t);
-//     document.body.appendChild(h);
-// }
+
+
+
+
+
+
