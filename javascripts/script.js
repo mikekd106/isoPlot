@@ -12,7 +12,7 @@ d3.json("testData.json",function(error,data){
 	var commonGroup = svgContainer.append("g");
 	var groups = new groupInfor();
 	for(var i in data){
-		drawOneTranscript(data[i],svgContainer,count++);
+		drawOneTranscript(data[i],svgContainer,count++,groups);
 		drawInCommonTranscript(data[i],commonGroup,groups);
 	}
 	var start_pos = data[0].start, end_pos = data[0].end
@@ -123,8 +123,8 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
     	if (i == (exonArray.length-1))
     	 	break;
     	var coorArray = Array()
-    	coorArray.push(new oneCoor(axisScale(exonArray[i].start),y_coor));
-    	coorArray.push(new oneCoor(axisScale((exonArray[i].start+exonArray[i+1].start)/2), y_coor-30));
+    	coorArray.push(new oneCoor(axisScale(exonArray[i].end),y_coor));
+    	coorArray.push(new oneCoor(axisScale((exonArray[i].end+exonArray[i+1].start)/2), y_coor-30));
     	coorArray.push(new oneCoor(axisScale(exonArray[i+1].start),y_coor));
     	var lineGraph = exonGroup.append("path")
                         			.attr("d", svgLineFunction(coorArray))
@@ -135,27 +135,10 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 
     groups.addOneGroup(exonGroup);
 
-    exonGroup.on("mouseover",function(d){
-    			var temp_groups = groups.group
-    			for(var i =0;i<temp_groups.length;i++){
-    				temp_groups[i].selectAll("path").attr("stroke-width",0)
-    			}
-		   		exonGroup.selectAll("rect").attr("stroke", "#9B489B").attr("stroke-width", 1)
-		   		exonGroup.selectAll("path").attr("stroke", "#9B489B").attr("stroke-width", 1)
-		    })
-		     .on("mouseout",function(d){
-		     	var temp_groups = groups.group
-    			for(var i =0;i<temp_groups.length;i++){
-    				temp_groups[i].selectAll("rect").attr("stroke-width", 0);
-    				temp_groups[i].selectAll("path").attr("stroke", "#539987").attr("stroke-width", 1)
-    			}
-		   		
-		    })
-
 
 
 }					
-function drawOneTranscript(oneTranscript,svgContainer,count){
+function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
 	var y_coor = 200 + 40 * count;
 	//var color = d3.scaleOrdinal(d3.schemeCategory20b);
@@ -264,6 +247,33 @@ function drawOneTranscript(oneTranscript,svgContainer,count){
     						   		  .attr("stroke-width", 0)
 						     })
 	
+	var viewGroup = oneTranscriptGroup.append('g');
+	var view = viewGroup.append("image")
+						.attr("x",20)
+						.attr("y",y_coor - rect_height/2)
+						.attr("width",25)
+						.attr("height",30)
+						.attr("xlink:href","Mike.jpg ")
+						.on("mouseover",function(){
+							var temp_groups = groups.group;
+							var index = count;
+							for(var i =0;i<temp_groups.length;i++){
+								if(index === i){
+									temp_groups[i].selectAll("rect").attr("stroke", "#9B489B").attr("stroke-width", 1);
+					   				temp_groups[i].selectAll("path").attr("stroke", "#9B489B").attr("stroke-width", 1)
+									continue;
+								}
+								temp_groups[i].selectAll("path").attr("stroke-width",0);
+							}
+					    })
+					    .on("mouseout",function(){
+					     	var temp_groups = groups.group
+							for(var i =0;i<temp_groups.length;i++){
+								temp_groups[i].selectAll("rect").attr("stroke-width", 0);
+								temp_groups[i].selectAll("path").attr("stroke", "#539987").attr("stroke-width", 1)
+							}
+					   		
+					    })
 }
 
 
