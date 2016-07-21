@@ -1,4 +1,4 @@
 //you change x!
-test(x)
+test(100000)
 test(i)
 test(j)
