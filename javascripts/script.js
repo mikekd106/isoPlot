@@ -1,5 +1,5 @@
 
-const svg_width = 1000,svg_height = 800;
+const svg_width = 1000,svg_height = 1000;
 var json = Array();
 var svgContainer = d3.select("body")
 						.append("svg")
@@ -8,7 +8,8 @@ var svgContainer = d3.select("body")
 d3.json("testData.json",function(error,data){
 	if (error) throw error;
 	var count = 0;
-	const y_coor = 50,line_start = 50,verti_length = 750,line_length = 800;
+	const y_coor = 50,line_start = 50,verti_length = 950,line_length = 800;
+	
 	var commonGroup = svgContainer.append("g");
 	var groups = new groupInfor();
 	for(var i in data){
@@ -22,7 +23,7 @@ d3.json("testData.json",function(error,data){
 
 	var commonCor = flagGroup.append("rect")
 				.attr("x",line_start-50)
-				.attr("y",130)
+				.attr("y",140)
 				.attr("width",50)
 				.attr("height",20)
 				.attr("stroke", "#cd6260")
@@ -33,7 +34,7 @@ d3.json("testData.json",function(error,data){
 
  	var commonInfo = flagGroup.append("text")
  					 .attr("x", line_start-50)
-	                 .attr("y", 150)
+	                 .attr("y", 160)
 	                 .text(null)
 	                 .attr("font-family", "sans-serif")
 	                 .attr("font-size", "15px")
@@ -79,8 +80,21 @@ d3.json("testData.json",function(error,data){
 });
 function groupInfor(){
 	this.group = Array()
+	this.exonConnectMap = new Map();
 	this.addOneGroup = function(one){
 		this.group.push(one);
+	}
+	this.addOneConnect = function(id1,id2,line,rects){
+		var key = new Array(2);
+        key[0] = id1;
+        key[1] = id2;
+		if(!this.exonConnectMap.has(key)){
+			var newObject = new Object();
+			newObject["line"] = line;
+			newObject["rects"] = rects;
+			this.exonConnectMap.set(key,newObject);	
+		}
+		
 	}
 }
 function oneCoor(x,y){
@@ -88,7 +102,7 @@ function oneCoor(x,y){
 	this.y = y;	
 }
 function drawInCommonTranscript(oneTranscript,commonGroup,groups){
-	const y_coor = 100,line_start = 50,line_length = 800,rect_height = 20;
+	const y_coor = 100,line_start = 50,line_length = 800,rect_height = 30;
 
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = oneTranscript["start"],
@@ -118,19 +132,21 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
     						
     
     
-    for(var i = 0; i<exonArray.length;i++){
+    for(var j = 0; j<exonArray.length;j++){
 
-    	if (i == (exonArray.length-1))
+    	if (j == (exonArray.length-1))
     	 	break;
-    	var coorArray = Array()
-    	coorArray.push(new oneCoor(axisScale(exonArray[i].end),y_coor));
-    	coorArray.push(new oneCoor(axisScale((exonArray[i].end+exonArray[i+1].start)/2), y_coor-30));
-    	coorArray.push(new oneCoor(axisScale(exonArray[i+1].start),y_coor));
+    	var coorArray = new Array()
+    	coorArray.push(new oneCoor(axisScale(exonArray[j].end),y_coor));
+    	coorArray.push(new oneCoor(axisScale((exonArray[j].end+exonArray[j+1].start)/2), y_coor-30));
+    	coorArray.push(new oneCoor(axisScale(exonArray[j+1].start),y_coor));
     	var lineGraph = exonGroup.append("path")
                         			.attr("d", svgLineFunction(coorArray))
                         			.attr("stroke", "#539987")
                         			.attr("stroke-width", 1)
                         			.attr("fill", "none");
+        var rects = exonGroup.selectAll("rect").filter(function(d,i){return i===j || i===(j+1)});
+        groups.addOneConnect(exonArray[j].exon_id,exonArray[j+1].exon_id,lineGraph,rects);
     }
 
     groups.addOneGroup(exonGroup);
@@ -140,8 +156,7 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 }					
 function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
-	var y_coor = 200 + 40 * count;
-	//var color = d3.scaleOrdinal(d3.schemeCategory20b);
+	var y_coor = 200 + 50 * count;
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = oneTranscript["start"],
 		end_pos = oneTranscript["end"];
@@ -163,8 +178,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	                   .attr("y1", y_coor)
 	                   .attr("x2", axisScale(end_pos))
 	                   .attr("y2", y_coor)
-	                   .attr("stroke-width", 2)
-                       .attr("stroke", "black");
+	                   .attr("stroke-width", 0.7)
+                       .attr("stroke", "black")
     //create Exons in one transcript                   
     var exonGroup = oneTranscriptGroup.append("g");
     var exons = exonGroup.selectAll("rect")
@@ -180,7 +195,24 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
     						   		div.style("display", "inline");
     						   		d3.select(this)
     						   		  .attr("stroke-width", 1.5)
-                       				  .attr("stroke", "#8b64f7");
+                       				  .attr("stroke", "#8b64f7")
+                       				  //.attr('stroke-alignment',"outer");
+                       				var temp_map = groups.exonConnectMap;
+                       				var set = temp_map.entries();
+
+                       				while(true){
+                       					var iterator = set.next();
+                       					if(iterator.done === true)
+                       						break
+                       					var temp = iterator.value
+                       					if(checkIdExit(temp[0],d.exon_id)){
+                       						temp[1].line.attr("stroke", "#9B489B").attr("stroke-width", 1);
+                       						temp[1].rects.attr("stroke", "#9B489B").attr("stroke-width", 1.5);
+                       					}else{
+                       						temp[1].line.attr("stroke-width",0);
+                       					}
+                       				}
+
     						   })
 						       .on("mousemove", function(d){
 						       		div.text("exon "+d.exon_number+" : "+d.start+"~"+d.end+"\n"+d.exon_id)
@@ -191,6 +223,18 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 						       		div.style("display", "none");
 						       		d3.select(this)
     						   		  .attr("stroke-width", 0)
+
+    						   		var temp_map = groups.exonConnectMap;
+                       				var set = temp_map.entries();
+
+                       				while(true){
+                       					var iterator = set.next();
+                       					if(iterator.done === true)
+                       						break
+                       					var temp = iterator.value
+                   						temp[1].line.attr("stroke", "#539987").attr("stroke-width", 1);
+                   						temp[1].rects.attr("stroke-width",0);	
+                       				}
 						       })
     //create UTRs in one transcript
     var utrGroup = oneTranscriptGroup.append("g");
@@ -199,15 +243,16 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 								.enter()
 								.append("rect");
 	var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("y",y_coor - rect_height/6)
+    						 .attr("y",y_coor)
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
-    						 .attr("height",rect_height/3)
+    						 .attr("height",rect_height/2)
     						 .style("fill",function(d){return "#ECA0C3"})
     						 .on("mouseover", function(d){
     						   		div.style("display", "inline");
     						   		d3.select(this)
     						   		  .attr("stroke-width", 1.5)
                        				  .attr("stroke", "#df629c");
+
     						 })
 						     .on("mousemove", function(d){
 						       		div.text("UTR : "+d.start+"~"+d.end)
@@ -226,9 +271,9 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 								.enter()
 								.append("rect");
 	var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("y",y_coor - rect_height/6)
+    						 .attr("y",y_coor)
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
-    						 .attr("height",rect_height/3)
+    						 .attr("height",rect_height/2)
     						 .style("fill",function(d){return "#B4C1FF"})
     						 .on("mouseover", function(d){
     						   		div.style("display", "inline");
@@ -259,8 +304,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							var index = count;
 							for(var i =0;i<temp_groups.length;i++){
 								if(index === i){
-									temp_groups[i].selectAll("rect").attr("stroke", "#9B489B").attr("stroke-width", 1);
-					   				temp_groups[i].selectAll("path").attr("stroke", "#9B489B").attr("stroke-width", 1)
+									temp_groups[i].selectAll("rect").attr("stroke", "#9B489B").attr("stroke-width", 1.5);
+					   				temp_groups[i].selectAll("path").attr("stroke", "#9B489B").attr("stroke-width", 1);
 									continue;
 								}
 								temp_groups[i].selectAll("path").attr("stroke-width",0);
@@ -274,8 +319,14 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							}
 					   		
 					    })
-}
 
+	function checkIdExit(arr, val) {
+	    return arr.some(function(arrVal) {
+	        return val === arrVal;
+	    });
+	}
+
+}
 
 
 
