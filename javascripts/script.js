@@ -26,7 +26,8 @@ d3.json("testData.json",function(error,data){
 				.attr("y",140)
 				.attr("width",50)
 				.attr("height",20)
-				.attr("stroke", "#cd6260")
+				.attr("stroke", "black")
+        .attr("stroke-dasharray","0.9")
     			.attr("stroke-width", 0)
     			.attr("fill", "none")
     			.attr("fill-opacity",0.4)
@@ -37,7 +38,7 @@ d3.json("testData.json",function(error,data){
 	                 .attr("y", 160)
 	                 .text(null)
 	                 .attr("font-family", "sans-serif")
-	                 .attr("font-size", "15px")
+	                 .attr("font-size", "10px")
 	                 .attr("fill", "#09649a");
 
 	var commonLine = flagGroup.append("line")
@@ -63,6 +64,7 @@ d3.json("testData.json",function(error,data){
 			   		}
 			   		else{
 			   			commonLine.attr("stroke-width",0.5)
+              .attr("stroke-dasharray","0.9")
 			   			commonCor.attr("stroke-width", 0.5)
 			   			commonInfo.text((axisScale_back(d3.event.pageX)).toFixed(2))
 			   
@@ -119,7 +121,9 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 								.enter()
 								.append("rect");
 	var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
-    						   .attr("y",y_coor )
+    						   .attr("ry",2)
+                   .attr("rx",2)
+                   .attr("y",y_coor )
     						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						   .attr("height",rect_height)
     						   .attr("fill-opacity",0.4)
@@ -138,13 +142,13 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
     	 	break;
     	var coorArray = new Array()
     	coorArray.push(new oneCoor(axisScale(exonArray[j].end),y_coor));
-    	coorArray.push(new oneCoor(axisScale((exonArray[j].end+exonArray[j+1].start)/2), y_coor-30));
+    	coorArray.push(new oneCoor(axisScale((exonArray[j].end+exonArray[j+1].start)/2), y_coor-20));
     	coorArray.push(new oneCoor(axisScale(exonArray[j+1].start),y_coor));
     	var lineGraph = exonGroup.append("path")
                         			.attr("d", svgLineFunction(coorArray))
-                        			.attr("stroke", "#539987")
+                        			.attr("stroke", "#888888")
                         			.attr("stroke-width", 1)
-                        			.attr("fill", "none");
+                              .attr("fill", "none");
         var rects = exonGroup.selectAll("rect").filter(function(d,i){return i===j || i===(j+1)});
         groups.addOneConnect(exonArray[j].exon_id,exonArray[j+1].exon_id,lineGraph,rects);
     }
@@ -188,14 +192,16 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 								.append("rect");
 	var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
     						   .attr("y",y_coor - rect_height/2)
-    						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+    						   .attr("ry",2)
+                   .attr("rx",2)
+                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						   .attr("height",rect_height)
     						   .style("fill",function(d){return "#BDA6F9"})
     						   .on("mouseover", function(d){
     						   		div.style("display", "inline");
     						   		d3.select(this)
-    						   		  .attr("stroke-width", 1.5)
-                       				  .attr("stroke", "#8b64f7")
+                				   		  .attr("stroke-width", 1.5)
+                       				  .attr("stroke", "#8b64f7");
                        				  //.attr('stroke-alignment',"outer");
                        				var temp_map = groups.exonConnectMap;
                        				var set = temp_map.entries();
@@ -206,8 +212,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
                        						break
                        					var temp = iterator.value
                        					if(checkIdExit(temp[0],d.exon_id)){
-                       						temp[1].line.attr("stroke", "#9B489B").attr("stroke-width", 1);
-                       						temp[1].rects.attr("stroke", "#9B489B").attr("stroke-width", 1.5);
+                       						temp[1].line.attr("stroke", "#8b64f7").attr("stroke-width", 1);
+                       						temp[1].rects.attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
                        					}else{
                        						temp[1].line.attr("stroke-width",0);
                        					}
@@ -222,7 +228,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 						       .on("mouseout", function(d){
 						       		div.style("display", "none");
 						       		d3.select(this)
-    						   		  .attr("stroke-width", 0)
+    						   		  .attr("stroke-width", 0);
+                    
 
     						   		var temp_map = groups.exonConnectMap;
                        				var set = temp_map.entries();
@@ -232,7 +239,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
                        					if(iterator.done === true)
                        						break
                        					var temp = iterator.value
-                   						temp[1].line.attr("stroke", "#539987").attr("stroke-width", 1);
+                   						temp[1].line.attr("stroke", "#888888").attr("stroke-width", 1);
                    						temp[1].rects.attr("stroke-width",0);	
                        				}
 						       })
@@ -243,7 +250,9 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 								.enter()
 								.append("rect");
 	var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("y",y_coor)
+    						 .attr("ry",2)
+                 .attr("rx",2)
+                 .attr("y",y_coor)
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						 .attr("height",rect_height/2)
     						 .style("fill",function(d){return "#ECA0C3"})
@@ -271,7 +280,9 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 								.enter()
 								.append("rect");
 	var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("y",y_coor)
+    						 .attr("ry",2)
+                 .attr("rx",2)
+                 .attr("y",y_coor)
     						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						 .attr("height",rect_height/2)
     						 .style("fill",function(d){return "#B4C1FF"})
@@ -304,8 +315,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							var index = count;
 							for(var i =0;i<temp_groups.length;i++){
 								if(index === i){
-									temp_groups[i].selectAll("rect").attr("stroke", "#9B489B").attr("stroke-width", 1.5);
-					   				temp_groups[i].selectAll("path").attr("stroke", "#9B489B").attr("stroke-width", 1);
+									temp_groups[i].selectAll("rect").attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
+					   				temp_groups[i].selectAll("path").attr("stroke", "#8b64f7").attr("stroke-width", 1);
 									continue;
 								}
 								temp_groups[i].selectAll("path").attr("stroke-width",0);
@@ -315,7 +326,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 					     	var temp_groups = groups.group
 							for(var i =0;i<temp_groups.length;i++){
 								temp_groups[i].selectAll("rect").attr("stroke-width", 0);
-								temp_groups[i].selectAll("path").attr("stroke", "#539987").attr("stroke-width", 1)
+								temp_groups[i].selectAll("path").attr("stroke", "#888888").attr("stroke-width", 1)
 							}
 					   		
 					    })
