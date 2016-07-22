@@ -1,5 +1,5 @@
 //you change x!
-test(10000)
+test(x)
 test(i)
 test(j)
 addsthmore
