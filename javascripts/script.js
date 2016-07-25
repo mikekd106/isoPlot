@@ -1,22 +1,50 @@
 
-const svg_width = 1000,svg_height = 1000;
-var json = Array();
-var svgContainer = d3.select("body")
-						.append("svg")
-						.attr("width",svg_width)
-						.attr("height",svg_height);
-d3.json("testData.json",function(error,data){
-	if (error) throw error;
+function drawData(geneId, geneData){
+	var oneGeneData; 
+	for(var i = 0;i<geneData.length;i++){
+		if(geneId === geneData[i].gene_id){
+			oneGeneData = geneData[i];
+			break;
+		}
+		if(i === geneData.length-1){
+			alert("can not find the gene data");
+			return "";
+		}
+	}
+	const svg_width = 1000,svg_height = 1000;
+	d3.select("body").selectAll("svg").remove();
+	var svgContainer = d3.select("body")
+							.append("svg")
+							.attr("width",svg_width)
+							.attr("height",svg_height);
+	
+	var geneInfoKey = ['gene_ID','gene_name','location','strand'];
+	var transcripts = oneGeneData["transcript"];
+	var groups = new groupInfor();
+	groups.countBorder(transcripts);
+	var geneInfo = [oneGeneData["gene_id"],oneGeneData["gene_name"],oneGeneData["chr"]+" "+groups.start_pos+"~"+groups.end_pos,oneGeneData["strand"]];	
+	
+
 	var count = 0;
 	const y_coor = 50,line_start = 50,verti_length = 950,line_length = 800;
-	
+	var geneInfoGroup = svgContainer.append("g");
 	var commonGroup = svgContainer.append("g");
-	var groups = new groupInfor();
-	for(var i in data){
-		drawOneTranscript(data[i],svgContainer,count++,groups);
-		drawInCommonTranscript(data[i],commonGroup,groups);
+
+	for(var t=0;t<geneInfo.length;t++){
+		geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text(geneInfoKey[t]+" : "+geneInfo[t]).attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
 	}
-	var start_pos = data[0].start, end_pos = data[0].end
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",135).attr("width",5).attr("height",5).style("fill","#BDA6F9")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 140).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",145).attr("width",5).attr("height",5).style("fill","#ECA0C3")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 150).text(" : UTR").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",155).attr("width",5).attr("height",5).style("fill","#B4C1FF")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 160).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	for(var i = 0 ;i<transcripts.length;i++){
+		drawOneTranscript(transcripts[i],svgContainer,count++,groups);
+		drawInCommonTranscript(transcripts[i],commonGroup,groups);
+	}
+
+	var start_pos = groups.start_pos, end_pos = groups.end_pos;
 	var axisScale_back = d3.scaleLinear().domain([line_start, line_start+line_length]).range([start_pos,end_pos]);
 
 	var flagGroup = svgContainer.append("g")
@@ -66,7 +94,7 @@ d3.json("testData.json",function(error,data){
 			   			commonLine.attr("stroke-width",0.5)
               .attr("stroke-dasharray","0.9")
 			   			commonCor.attr("stroke-width", 0.5)
-			   			commonInfo.text((axisScale_back(d3.event.pageX)).toFixed(2))
+			   			commonInfo.text(Math.round(axisScale_back(d3.event.pageX)))
 			   
 			   			flagGroup.attr("transform","translate("+move+",0)").raise();
 			   			
@@ -79,10 +107,12 @@ d3.json("testData.json",function(error,data){
 			   });           
 	
 
-});
+}
 function groupInfor(){
 	this.group = Array()
 	this.exonConnectMap = new Map();
+	this.start_pos;
+	this.end_pos;
 	this.addOneGroup = function(one){
 		this.group.push(one);
 	}
@@ -98,6 +128,16 @@ function groupInfor(){
 		}
 		
 	}
+	this.countBorder = function(transArray){
+		var countStart = new Array();
+		var countEnd = new Array();
+		for(var j = 0;j<transArray.length;j++){
+			countStart.push(transArray[j].start);
+			countEnd.push(transArray[j].end);
+		}
+		this.start_pos = Math.min.apply(null,countStart);
+		this.end_pos = Math.max.apply(null,countEnd);
+	}
 }
 function oneCoor(x,y){
 	this.x = x;
@@ -107,8 +147,8 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 	const y_coor = 100,line_start = 50,line_length = 800,rect_height = 30;
 
 	var transcript_id = oneTranscript["transcript_id"],
-		start_pos = oneTranscript["start"],
-		end_pos = oneTranscript["end"];
+		start_pos = groups.start_pos,
+		end_pos = groups.end_pos;
 
 	var axisScale = d3.scaleLinear().domain([start_pos,end_pos]).range([line_start, line_start+line_length]);
 
@@ -162,8 +202,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
 	var y_coor = 200 + 50 * count;
 	var transcript_id = oneTranscript["transcript_id"],
-		start_pos = oneTranscript["start"],
-		end_pos = oneTranscript["end"];
+		start_pos = groups.start_pos,
+		end_pos = groups.end_pos;
 	
 	var exonArray = oneTranscript["exons"],
 		utrArray = oneTranscript["UTR"],
@@ -176,6 +216,13 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
     			.style("display", "none");
 
     var oneTranscriptGroup = svgContainer.append("g");
+    var id = oneTranscriptGroup.append("text")
+ 					 .attr("x", line_start)
+	                 .attr("y", y_coor - rect_height/2 - 5)
+	                 .text("transcript_ID : "+transcript_id)
+	                 .attr("font-family", "sans-serif")
+	                 .attr("font-size", "10px")
+	                 .attr("fill", "#09649a");
 	//create a line in one transcript
 	var line = oneTranscriptGroup.append("line")
             		   .attr("x1", axisScale(start_pos))
@@ -184,125 +231,131 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	                   .attr("y2", y_coor)
 	                   .attr("stroke-width", 0.7)
                        .attr("stroke", "black")
-    //create Exons in one transcript                   
-    var exonGroup = oneTranscriptGroup.append("g");
-    var exons = exonGroup.selectAll("rect")
+    if(exonArray.length>0){
+	    //create Exons in one transcript                   
+	    var exonGroup = oneTranscriptGroup.append("g");
+	    var exons = exonGroup.selectAll("rect")
 								.data(exonArray)
 								.enter()
 								.append("rect");
-	var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
-    						   .attr("y",y_coor - rect_height/2)
-    						   .attr("ry",2)
-                   .attr("rx",2)
-                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
-    						   .attr("height",rect_height)
-    						   .style("fill",function(d){return "#BDA6F9"})
-    						   .on("mouseover", function(d){
-    						   		div.style("display", "inline");
-    						   		d3.select(this)
-                				   		  .attr("stroke-width", 1.5)
-                       				  .attr("stroke", "#8b64f7");
-                       				  //.attr('stroke-alignment',"outer");
-                       				var temp_map = groups.exonConnectMap;
-                       				var set = temp_map.entries();
-
-                       				while(true){
-                       					var iterator = set.next();
-                       					if(iterator.done === true)
-                       						break
-                       					var temp = iterator.value
-                       					if(checkIdExit(temp[0],d.exon_id)){
-                       						temp[1].line.attr("stroke", "#8b64f7").attr("stroke-width", 1);
-                       						temp[1].rects.attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
-                       					}else{
-                       						temp[1].line.attr("stroke-width",0);
-                       					}
-                       				}
-
-    						   })
-						       .on("mousemove", function(d){
-						       		div.text("exon "+d.exon_number+" : "+d.start+"~"+d.end+"\n"+d.exon_id)
-										.style("left", (d3.event.pageX + 10) + "px")
-										.style("top", (d3.event.pageY - 50) + "px")
-						       })
-						       .on("mouseout", function(d){
-						       		div.style("display", "none");
-						       		d3.select(this)
-    						   		  .attr("stroke-width", 0);
-                    
-
-    						   		var temp_map = groups.exonConnectMap;
-                       				var set = temp_map.entries();
-
-                       				while(true){
-                       					var iterator = set.next();
-                       					if(iterator.done === true)
-                       						break
-                       					var temp = iterator.value
-                   						temp[1].line.attr("stroke", "#888888").attr("stroke-width", 1);
-                   						temp[1].rects.attr("stroke-width",0);	
-                       				}
-						       })
-    //create UTRs in one transcript
-    var utrGroup = oneTranscriptGroup.append("g");
-    var utrs = utrGroup.selectAll("rect")
-								.data(utrArray)
-								.enter()
-								.append("rect");
-	var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("ry",2)
-                 .attr("rx",2)
-                 .attr("y",y_coor)
-    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
-    						 .attr("height",rect_height/2)
-    						 .style("fill",function(d){return "#ECA0C3"})
-    						 .on("mouseover", function(d){
-    						   		div.style("display", "inline");
-    						   		d3.select(this)
-    						   		  .attr("stroke-width", 1.5)
-                       				  .attr("stroke", "#df629c");
-
-    						 })
-						     .on("mousemove", function(d){
-						       		div.text("UTR : "+d.start+"~"+d.end)
-										.style("left", (d3.event.pageX + 10) + "px")
-										.style("top", (d3.event.pageY - 50) + "px")
-						     })
-						     .on("mouseout", function(d){
-						       		div.style("display", "none");
-						       		d3.select(this)
-    						   		  .attr("stroke-width", 0)
-						     })
-    //create CDSs in one transcript						 
-    var cdsGroup = oneTranscriptGroup.append("g");
-    var cdss = cdsGroup.selectAll("rect")
-								.data(cdsArray)
-								.enter()
-								.append("rect");
-	var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
-    						 .attr("ry",2)
-                 .attr("rx",2)
-                 .attr("y",y_coor)
-    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
-    						 .attr("height",rect_height/2)
-    						 .style("fill",function(d){return "#B4C1FF"})
-    						 .on("mouseover", function(d){
-    						   		div.style("display", "inline");
-    						   		d3.select(this)
-    						   		  .attr("stroke-width", 1.5)
-                       				  .attr("stroke", "#7a91ff");
-    						 })
-						     .on("mousemove", function(d){
-						       		div.text("CDS : "+d.start+"~"+d.end)
-										.style("left", (d3.event.pageX + 10) + "px")
-										.style("top", (d3.event.pageY - 50) + "px")
-						     })
-						     .on("mouseout", function(d){
-						       		div.style("display", "none");
-						       		d3.select(this)
-    						   		  .attr("stroke-width", 0)
-						     })
 	
+		var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
+	    						   .attr("y",y_coor - rect_height/2)
+	    						   .attr("ry",2)
+	                   .attr("rx",2)
+	                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+	    						   .attr("height",rect_height)
+	    						   .style("fill",function(d){return "#BDA6F9"})
+	    						   .on("mouseover", function(d){
+	    						   		div.style("display", "inline");
+	    						   		d3.select(this)
+	                				   		  .attr("stroke-width", 1.5)
+	                       				  .attr("stroke", "#8b64f7");
+	                       				  //.attr('stroke-alignment',"outer");
+	                       				var temp_map = groups.exonConnectMap;
+	                       				var set = temp_map.entries();
+
+	                       				while(true){
+	                       					var iterator = set.next();
+	                       					if(iterator.done === true)
+	                       						break
+	                       					var temp = iterator.value
+	                       					if(checkIdExit(temp[0],d.exon_id)){
+	                       						temp[1].line.attr("stroke", "#8b64f7").attr("stroke-width", 1);
+	                       						temp[1].rects.attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
+	                       					}else{
+	                       						temp[1].line.attr("stroke-width",0);
+	                       					}
+	                       				}
+
+	    						   })
+							       .on("mousemove", function(d){
+							       		div.text("exon "+d.exon_number+" : "+d.start+"~"+d.end+"\n"+d.exon_id)
+											.style("left", (d3.event.pageX + 10) + "px")
+											.style("top", (d3.event.pageY - 50) + "px")
+							       })
+							       .on("mouseout", function(d){
+							       		div.style("display", "none");
+							       		d3.select(this)
+	    						   		  .attr("stroke-width", 0);
+	                    
+
+	    						   		var temp_map = groups.exonConnectMap;
+	                       				var set = temp_map.entries();
+
+	                       				while(true){
+	                       					var iterator = set.next();
+	                       					if(iterator.done === true)
+	                       						break
+	                       					var temp = iterator.value
+	                   						temp[1].line.attr("stroke", "#888888").attr("stroke-width", 1);
+	                   						temp[1].rects.attr("stroke-width",0);	
+	                       				}
+							       })
+	}
+	if(utrArray.length>0){
+	    //create UTRs in one transcript
+	    var utrGroup = oneTranscriptGroup.append("g");
+	    var utrs = utrGroup.selectAll("rect")
+									.data(utrArray)
+									.enter()
+									.append("rect");
+		var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
+	    						 .attr("ry",2)
+	                 .attr("rx",2)
+	                 .attr("y",y_coor)
+	    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+	    						 .attr("height",rect_height/2)
+	    						 .style("fill",function(d){return "#ECA0C3"})
+	    						 .on("mouseover", function(d){
+	    						   		div.style("display", "inline");
+	    						   		d3.select(this)
+	    						   		  .attr("stroke-width", 1.5)
+	                       				  .attr("stroke", "#df629c");
+
+	    						 })
+							     .on("mousemove", function(d){
+							       		div.text("UTR : "+d.start+"~"+d.end)
+											.style("left", (d3.event.pageX + 10) + "px")
+											.style("top", (d3.event.pageY - 50) + "px")
+							     })
+							     .on("mouseout", function(d){
+							       		div.style("display", "none");
+							       		d3.select(this)
+	    						   		  .attr("stroke-width", 0)
+							     })
+	}
+	if(cdsArray.length>0){
+	    //create CDSs in one transcript						 
+	    var cdsGroup = oneTranscriptGroup.append("g");
+	    var cdss = cdsGroup.selectAll("rect")
+									.data(cdsArray)
+									.enter()
+									.append("rect");
+		var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
+	    						 .attr("ry",2)
+	                 .attr("rx",2)
+	                 .attr("y",y_coor)
+	    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+	    						 .attr("height",rect_height/2)
+	    						 .style("fill",function(d){return "#B4C1FF"})
+	    						 .on("mouseover", function(d){
+	    						   		div.style("display", "inline");
+	    						   		d3.select(this)
+	    						   		  .attr("stroke-width", 1.5)
+	                       				  .attr("stroke", "#7a91ff");
+	    						 })
+							     .on("mousemove", function(d){
+							       		div.text("CDS : "+d.start+"~"+d.end)
+											.style("left", (d3.event.pageX + 10) + "px")
+											.style("top", (d3.event.pageY - 50) + "px")
+							     })
+							     .on("mouseout", function(d){
+							       		div.style("display", "none");
+							       		d3.select(this)
+	    						   		  .attr("stroke-width", 0)
+							     })
+	}
 	var viewGroup = oneTranscriptGroup.append('g');
 	var view = viewGroup.append("image")
 						.attr("x",20)
@@ -338,7 +391,6 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	}
 
 }
-
 
 
 

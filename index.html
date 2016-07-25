@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>isoPlot</title>
 	<link rel='stylesheet' type='text/css' href='stylesheets/main.css'/>
 
 </head>
 <body> 
 	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
+	<script type="text/javascript">
+		var geneData;
+		function renewGene(index){
+			function addOptions(element, index, array){
+				gene.options[index+1] = new Option(element.gene_id,element.gene_id);
+			};
+			gene.options[0] = new Option("Choose Gene ID", "#");
+			d3.json("testten.json",function(error,data){
+				data.forEach(addOptions);
+				gene.options.length = data.length+1;
+				geneData = data;
+			});
+
+		}
+	</script>
+	
+	<select id="version" onChange="renewGene(this.value)">
+		<option value="#">Choose one version</option>
+		<option value="version1">version1</option>
+	</select>
+	<select id="gene" onChange="drawData(this.value, geneData)">
+		<option value="#">Choose version first</option>
+	</select>
+	<br>
 	<script type='text/javascript' src='javascripts/script.js'></script>
+
+	
 </body>
 </html>
