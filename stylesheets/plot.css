@@ -1,0 +1,71 @@
+body {
+	margin:0px;
+}
+#plot{
+  width:100%;
+  height: 100%;
+  margin:5%;
+}
+/*text {
+  font: 10px sans-serif;
+}*/
+
+.tooltip {
+  position: absolute;
+  text-align: left;
+  width: 100px;
+  height: 40px;
+  padding: 5px;
+  margin-top: -20px;
+  font: 10px sans-serif;
+  background: #F7EEB3;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+
+#version,#gene {
+    background-color: #7a91ff;
+    color: white;
+    padding: 3px;
+    font-size: 11px;
+    border: none;
+    cursor: pointer;
+    border-radius:2px;
+    margin:5px;s
+}
+
+/* Dropdown button on hover & focus */
+#version:hover, #version:focus, #gene:hover, #gene:focus {
+    background-color: #6a81df;
+}
+
+/* The container <div> - needed to position the#version content */
+#version,#gene {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+#version-content, #gene-content {
+    display: none;
+    position: absolute;
+    background-color: #6a81df;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+/* Links inside the#version */
+#version-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of#version links on hover */
+#version-content a:hover {background-color: #6a81df}
+
+/* Show the#version menu (use JS to add this class to the #version-content container when the user clicks on the#version button) */
+.show {display:block;}
+
