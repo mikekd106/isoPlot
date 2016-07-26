@@ -18,7 +18,7 @@ function drawData(geneId, geneData){
 							.attr("width",svg_width)
 							.attr("height",svg_height);
 	
-	var geneInfoKey = ['gene_ID','gene_name','location','strand'];
+	var geneInfoKey = ['Gene_ID','Gene_name','Location','Strand'];
 	var transcripts = oneGeneData["transcript"];
 	var groups = new groupInfor();
 	groups.countBorder(transcripts);
@@ -91,11 +91,9 @@ function drawData(geneId, geneData){
 			   			commonInfo.text(null)
 			   		}
 			   		else{
-			   			commonLine.attr("stroke-width",0.5)
-              .attr("stroke-dasharray","0.9")
+			   			commonLine.attr("stroke-width",0.5).attr("stroke-dasharray","0.9")
 			   			commonCor.attr("stroke-width", 0.5)
-			   			commonInfo.text(Math.round(axisScale_back(d3.event.pageX)))
-			   
+			   			commonInfo.text(Math.round(axisScale_back(d3.event.pageX)))		   			
 			   			flagGroup.attr("transform","translate("+move+",0)").raise();
 			   			
 			   		}
@@ -162,8 +160,8 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 								.append("rect");
 	var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
     						   .attr("ry",2)
-                   .attr("rx",2)
-                   .attr("y",y_coor )
+			                   .attr("rx",2)
+			                   .attr("y",y_coor )
     						   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
     						   .attr("height",rect_height)
     						   .attr("fill-opacity",0.4)
@@ -188,7 +186,7 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
                         			.attr("d", svgLineFunction(coorArray))
                         			.attr("stroke", "#888888")
                         			.attr("stroke-width", 1)
-                              .attr("fill", "none");
+                              		.attr("fill", "none");
         var rects = exonGroup.selectAll("rect").filter(function(d,i){return i===j || i===(j+1)});
         groups.addOneConnect(exonArray[j].exon_id,exonArray[j+1].exon_id,lineGraph,rects);
     }
@@ -219,7 +217,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
     var id = oneTranscriptGroup.append("text")
  					 .attr("x", line_start)
 	                 .attr("y", y_coor - rect_height/2 - 5)
-	                 .text("transcript_ID : "+transcript_id)
+	                 .text("Transcript_ID : "+transcript_id)
 	                 .attr("font-family", "sans-serif")
 	                 .attr("font-size", "10px")
 	                 .attr("fill", "#09649a");
@@ -242,8 +240,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 		var exonsAttributes = exons.attr("x",function(d){return axisScale(d.start)})
 	    						   .attr("y",y_coor - rect_height/2)
 	    						   .attr("ry",2)
-	                   .attr("rx",2)
-	                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
+				                   .attr("rx",2)
+				                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
 	    						   .attr("height",rect_height)
 	    						   .style("fill",function(d){return "#BDA6F9"})
 	    						   .on("mouseover", function(d){
