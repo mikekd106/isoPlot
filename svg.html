@@ -19,7 +19,7 @@
 				temp.push(element.gene_id);
 				temp.push(element.gene_name); 
 			};
-			document.getElementById("autocomplete-gene").placeholder = "Input Gene name or ID";
+			document.getElementById("autocomplete-gene").placeholder = "input Gene name or ID";
 			d3.json("BDGP6.json",function(error,data){
 				data.forEach(addOptions);
 				$( "#autocomplete-gene" ).autocomplete({
@@ -37,7 +37,7 @@
 	               }
 	            });
 	            $("#autocomplete-gene").keyup(function (e) {
-				      if (e.keyCode == 13) { // 13 === enter
+				      if (e.keyCode === 13) { // 13 === enter
 				      		if(temp.length > 0){
 								var geneIndex = temp.indexOf(document.getElementById("autocomplete-gene").value); 
 								if(geneIndex === -1)
