@@ -26,19 +26,24 @@ function drawData(geneId, geneData){
 	
 
 	var count = 0;
-	const y_coor = 50,line_start = 50,verti_length = 950,line_length = 800;
+	const y_coor = 80,line_start = 50,verti_length = 920,line_length = 800;
 	var geneInfoGroup = svgContainer.append("g");
 	var commonGroup = svgContainer.append("g");
 
-	for(var t=0;t<geneInfo.length;t++){
+	for(var t=0;t<=geneInfo.length;t++){
+		if(t === geneInfo.length){
+			geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text("Overview").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#392B58");		
+			break;
+		}
 		geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text(geneInfoKey[t]+" : "+geneInfo[t]).attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+
 	}
-	geneInfoGroup.append("rect").attr("x",line_start).attr("y",135).attr("width",5).attr("height",5).style("fill","#BDA6F9")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 140).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
-	geneInfoGroup.append("rect").attr("x",line_start).attr("y",145).attr("width",5).attr("height",5).style("fill","#ECA0C3")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 150).text(" : UTR").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
-	geneInfoGroup.append("rect").attr("x",line_start).attr("y",155).attr("width",5).attr("height",5).style("fill","#B4C1FF")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 160).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",175).attr("width",5).attr("height",5).style("fill","#BDA6F9")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 180).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",185).attr("width",5).attr("height",5).style("fill","#ECA0C3")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 190).text(" : UTR").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("rect").attr("x",line_start).attr("y",195).attr("width",5).attr("height",5).style("fill","#B4C1FF")
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 200).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
 	for(var i = 0 ;i<transcripts.length;i++){
 		drawOneTranscript(transcripts[i],svgContainer,count++,groups);
 		drawInCommonTranscript(transcripts[i],commonGroup,groups);
@@ -51,11 +56,11 @@ function drawData(geneId, geneData){
 
 	var commonCor = flagGroup.append("rect")
 				.attr("x",line_start-50)
-				.attr("y",140)
+				.attr("y",158)
 				.attr("width",50)
-				.attr("height",20)
+				.attr("height",12)
 				.attr("stroke", "black")
-        .attr("stroke-dasharray","0.9")
+        		.attr("stroke-dasharray","0.9")
     			.attr("stroke-width", 0)
     			.attr("fill", "none")
     			.attr("fill-opacity",0.4)
@@ -63,7 +68,7 @@ function drawData(geneId, geneData){
 
  	var commonInfo = flagGroup.append("text")
  					 .attr("x", line_start-50)
-	                 .attr("y", 160)
+	                 .attr("y", 170)
 	                 .text(null)
 	                 .attr("font-family", "sans-serif")
 	                 .attr("font-size", "10px")
@@ -142,7 +147,7 @@ function oneCoor(x,y){
 	this.y = y;	
 }
 function drawInCommonTranscript(oneTranscript,commonGroup,groups){
-	const y_coor = 100,line_start = 50,line_length = 800,rect_height = 30;
+	const y_coor = 125,line_start = 50,line_length = 800,rect_height = 30;
 
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = groups.start_pos,
@@ -198,7 +203,7 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 }					
 function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
-	var y_coor = 200 + 50 * count;
+	var y_coor = 235 + 50 * count;
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = groups.start_pos,
 		end_pos = groups.end_pos;
