@@ -69,3 +69,24 @@ body {
 /* Show the#version menu (use JS to add this class to the #version-content container when the user clicks on the#version button) */
 .show {display:block;}
 
+#gene_search_container{
+  margin-top: 10px;
+  /*needed for some reason*/
+  margin-left: 0px;
+  display: none;
+}
+
+/*gene search box */
+#gene_search_box{
+  width:120px;
+  /*float:left;*/
+  /*display: none;*/
+}
+
+/*gene search button*/
+#gene_search_button{
+  /*width:50px;*/
+  /*float:left;*/
+  margin-top:-2px;
+  /*display: none;*/
+}

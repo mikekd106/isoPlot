@@ -4,36 +4,69 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>isoPlot</title>
 	<link rel='stylesheet' type='text/css' href='stylesheets/plot.css'/>
-
+	
+    
 </head>
 <body> 
 	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
+	<link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 	<script type="text/javascript">
-		var geneData;
 		function renewGene(index){
+			var temp = Array();
 			function addOptions(element, index, array){
-				gene.options[index+1] = new Option(element.gene_id,element.gene_id);
+				temp.push(element.gene_id);
+				temp.push(element.gene_name); 
 			};
-			gene.options[0] = new Option("Choose Gene ID", "#");
+			document.getElementById("autocomplete-gene").placeholder = "Input Gene name or ID";
 			d3.json("BDGP6.json",function(error,data){
 				data.forEach(addOptions);
-				gene.options.length = data.length+1;
-				geneData = data;
-			});
+				$( "#autocomplete-gene" ).autocomplete({
+	               source: function(request, response) {
+				        var results = $.ui.autocomplete.filter(temp, request.term);
 
+				        response(results.slice(0, 10));
+				   },
+	               delay: 0.5,
+	               minLength: 1,
+	               autoFocus:true,
+	               select:function(event,ui){
+	               		var index = temp.indexOf(ui.item.value);
+	               		drawData(data[Math.floor(index/2)]);
+	               }
+	            });
+	            $("#autocomplete-gene").keyup(function (e) {
+				      if (e.keyCode == 13) { // 13 === enter
+				      		if(temp.length > 0){
+								var geneIndex = temp.indexOf(document.getElementById("autocomplete-gene").value); 
+								if(geneIndex === -1)
+									if(document.getElementById("autocomplete-gene").value === "")
+										alert("choose one Gene")
+									else
+										alert("Gene not found");
+								else
+									drawData(data[Math.floor(geneIndex/2)]);
+				      		}
+					  }
+				});
+			});
+			
 		}
+		 
 	</script>
 	
-	<select id="version" onChange="renewGene(this.value)">
+	<select id="version" onchange="renewGene(this.value)">
 		<option value="#">Choose one version</option>
 		<option value="version1">version1</option>
 	</select>
-	<select id="gene" onChange="drawData(this.value, geneData)">
-		<option value="#">Choose version first</option>
-	</select>
+    <label for="autocomplete-gene">Gene_ID: </label>
+    <input id="autocomplete-gene" placeholder="choose one version">
+     
+
 	<br>
 	<script type='text/javascript' src='javascripts/script.js'></script>
-	 <!-- <script src="//code.jquery.com/jquery-1.11.3.min.js"></script> -->
+	
 	
 </body>
 </html>

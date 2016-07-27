@@ -1,16 +1,5 @@
 
-function drawData(geneId, geneData){
-	var oneGeneData; 
-	for(var i = 0;i<geneData.length;i++){
-		if(geneId === geneData[i].gene_id){
-			oneGeneData = geneData[i];
-			break;
-		}
-		if(i === geneData.length-1){
-			alert("can not find the gene data");
-			return "";
-		}
-	}
+function drawData(oneGeneData){ 
 	const svg_width = 1000,svg_height = 1000;
 	d3.select("body").selectAll("svg").remove();
 	var svgContainer = d3.select("body")
@@ -18,7 +7,7 @@ function drawData(geneId, geneData){
 							.attr("width",svg_width)
 							.attr("height",svg_height);
 	
-	var geneInfoKey = ['Gene_ID','Gene_name','Location','Strand'];
+	const geneInfoKey = ['Gene_ID','Gene_name','Location','Strand'];
 	var transcripts = oneGeneData["transcript"];
 	var groups = new groupInfor();
 	groups.countBorder(transcripts);
