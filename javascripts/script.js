@@ -254,7 +254,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	                       					var temp = iterator.value
 	                       					if(checkIdExit(temp[0],d.exon_id)){
 	                       						temp[1].line.attr("stroke", "#8b64f7").attr("stroke-width", 1);
-	                       						temp[1].rects.attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
+	                       						temp[1].rects.attr("stroke", "#5b34c7").attr("stroke-width", 1.5);
 	                       					}else{
 	                       						temp[1].line.attr("stroke-width",0);
 	                       					}
@@ -335,7 +335,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	    						   		div.style("display", "inline");
 	    						   		d3.select(this)
 	    						   		  .attr("stroke-width", 1.5)
-	                       				  .attr("stroke", "#0a116f");
+	                       				  .attr("stroke", "#8491dF");
 	    						 })
 							     .on("mousemove", function(d){
 							       		div.text("CDS : "+d.start+"~"+d.end)
@@ -360,8 +360,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							var index = count;
 							for(var i =0;i<temp_groups.length;i++){
 								if(index === i){
-									temp_groups[i].selectAll("rect").attr("stroke", "#8b64f7").attr("stroke-width", 1.5);
-					   				temp_groups[i].selectAll("path").attr("stroke", "#8b64f7").attr("stroke-width", 1);
+									temp_groups[i].selectAll("rect").attr("stroke", "#5b34c7").attr("stroke-width", 1.5);
+					   				temp_groups[i].selectAll("path").attr("stroke", "#5b34c7").attr("stroke-width", 1);
 									continue;
 								}
 								temp_groups[i].selectAll("path").attr("stroke-width",0);
