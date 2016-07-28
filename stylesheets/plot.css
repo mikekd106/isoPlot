@@ -32,7 +32,7 @@ body {
     border: none;
     cursor: pointer;
     border-radius:2px;
-    margin:5px;
+    margin:15px;
 }
 
 /* Dropdown button on hover & focus */
@@ -89,4 +89,45 @@ body {
   /*float:left;*/
   margin-top:-2px;
   /*display: none;*/
+}
+
+label{
+  font-size: 11px;
+  font: Arial;
+  color:#7a91ff;
+/*  font-weight: bold;*/
+}
+
+input{
+  font-size: 11px;
+  font: Arial;
+  color:#555555;
+}
+
+.ui-menu .ui-menu-item{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    list-style-image:none;
+}
+
+.ui-widget-content{
+  background: #eeeeee;
+  opacity:0.8;
+}
+
+.ui-widget{
+  font-size: 0.7em;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+  border: 2px solid #aac1ff;
+  background: #7a91ff;
+  font-weight: bold;
+  color: #eeeeee;
 }

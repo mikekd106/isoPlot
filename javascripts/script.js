@@ -350,11 +350,11 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	}
 	var viewGroup = oneTranscriptGroup.append('g');
 	var view = viewGroup.append("image")
-						.attr("x",20)
+						.attr("x",10)
 						.attr("y",y_coor - rect_height/2)
 						.attr("width",25)
 						.attr("height",30)
-						.attr("xlink:href","Mike.jpg ")
+						.attr("xlink:href","click.png ")
 						.on("mouseover",function(){
 							var temp_groups = groups.group;
 							var index = count;
