@@ -24,15 +24,15 @@ function drawData(oneGeneData){
 			geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text("Overview").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#392B58");		
 			break;
 		}
-		geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text(geneInfoKey[t]+" : "+geneInfo[t]).attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+		geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text(geneInfoKey[t]+" : "+geneInfo[t]).attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 
 	}
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",175).attr("width",5).attr("height",5).style("fill","#BDA6F9")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 180).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 180).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",185).attr("width",5).attr("height",5).style("fill","#ECA0C3")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 190).text(" : UTR").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 190).text(" : UTR").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",195).attr("width",5).attr("height",5).style("fill","#B4C1FF")
-	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 200).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#09649a");
+	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 200).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 	for(var i = 0 ;i<transcripts.length;i++){
 		drawOneTranscript(transcripts[i],svgContainer,count++,groups);
 		drawInCommonTranscript(transcripts[i],commonGroup,groups);
@@ -61,7 +61,7 @@ function drawData(oneGeneData){
 	                 .text(null)
 	                 .attr("font-family", "sans-serif")
 	                 .attr("font-size", "10px")
-	                 .attr("fill", "#09649a");
+	                 .attr("fill", "#0a116f");
 
 	var commonLine = flagGroup.append("line")
 				.attr("x1", line_start)
@@ -192,7 +192,7 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 }					
 function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
-	var y_coor = 235 + 50 * count;
+	var y_coor = 265 + 50 * count;
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = groups.start_pos,
 		end_pos = groups.end_pos;
@@ -214,7 +214,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	                 .text("Transcript_ID : "+transcript_id)
 	                 .attr("font-family", "sans-serif")
 	                 .attr("font-size", "10px")
-	                 .attr("fill", "#09649a");
+	                 .attr("fill", "#0a116f");
 	//create a line in one transcript
 	var line = oneTranscriptGroup.append("line")
             		   .attr("x1", axisScale(start_pos))
@@ -335,7 +335,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	    						   		div.style("display", "inline");
 	    						   		d3.select(this)
 	    						   		  .attr("stroke-width", 1.5)
-	                       				  .attr("stroke", "#7a91ff");
+	                       				  .attr("stroke", "#0a116f");
 	    						 })
 							     .on("mousemove", function(d){
 							       		div.text("CDS : "+d.start+"~"+d.end)
