@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>isoPlot</title>
+	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
+	<link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+     <link rel='stylesheet' type='text/css' href='stylesheets/plot.css'/>
+	 <script type='text/javascript' src='javascripts/script.js'></script>
+
+    
+</head>
+<body> 
+
+	<script type="text/javascript">
+		function renewGene(index){
+			var temp = Array();
+			function addOptions(element, index, array){
+				temp.push(element.gene_id);
+				temp.push(element.gene_name); 
+			};
+			document.getElementById("autocomplete-gene").placeholder = "input Gene name or ID";
+			d3.json("BDGP6.json",function(error,data){
+				data.forEach(addOptions);
+				$( "#autocomplete-gene" ).autocomplete({
+	               source: function(request, response) {
+				        var results = $.ui.autocomplete.filter(temp, request.term);
+
+				        response(results.slice(0, 10));
+				   },
+	               delay: 0.5,
+	               minLength: 1,
+	               autoFocus:true,
+	               select:function(event,ui){
+	               		var index = temp.indexOf(ui.item.value);
+	               		drawData(data[Math.floor(index/2)]);
+	               }
+	            });
+	            $("#autocomplete-gene").keyup(function (e) {
+				      if (e.keyCode === 13) { // 13 === enter
+				      		if(temp.length > 0){
+								var geneIndex = temp.indexOf(document.getElementById("autocomplete-gene").value); 
+								if(geneIndex === -1)
+									if(document.getElementById("autocomplete-gene").value === "")
+										alert("choose one Gene")
+									else
+										alert("Gene not found");
+								else
+									drawData(data[Math.floor(geneIndex/2)]);
+				      		}
+					  }
+				});
+			});
+			
+		}
+		 
+	</script>
+	<div class="div_class">
+		<select id="version" onchange="renewGene(this.value)">
+			<option value="#">Choose one version</option>
+			<option value="version1">version1</option>
+		</select>
+	    <label for="autocomplete-gene">Gene_ID: </label>
+	    <input id="autocomplete-gene" placeholder="choose one version">
+	    <input type="checkbox" id="verti_line" checked> display vertical line 
+	    <!-- <input type="checkbox" id="arc" > use arc line  -->
+		<br>
+	</div>
+	<div class="div_class" id = "svg_id"></div>
+	<div class="div_class" id = "iframe_id"></div>
+	
+</body>
+</html>
