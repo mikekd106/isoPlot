@@ -1,5 +1,5 @@
 body {
-	margin:0px;
+  margin:0px;
 }
 #plot{
   width:100%;
@@ -10,6 +10,16 @@ body {
   font: 10px sans-serif;
 }*/
 
+div#svg2_id {
+    height: 300px;
+    width: 1020px;
+    border:0px solid #888;
+    overflow: scroll;
+    background-color: #F3E1DD;
+}
+div#isoform_div{
+    border:1px solid #888;
+}
 .tooltip {
   position: absolute;
   text-align: left;
@@ -22,7 +32,9 @@ body {
   pointer-events: none;
   opacity: 0.8;
 }
-
+.div_class{
+  margin:0px;
+}
 
 #version,#gene {
     background-color: #7a91ff;

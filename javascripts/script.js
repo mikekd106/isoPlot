@@ -1,8 +1,9 @@
 
 function drawData(oneGeneData){ 
-	const svg_width = 1000,svg_height = 1000;
-	d3.select("body").selectAll("svg").remove();
-	var svgContainer = d3.select("body")
+	
+	const svg_width = 1000,svg_height = 240;//svg_height = 1000;
+	d3.select("body").select("#svg1_id").selectAll("svg").remove();
+	var svgContainer = d3.select("body").select("#svg1_id")
 							.append("svg")
 							.attr("width",svg_width)
 							.attr("height",svg_height);
@@ -13,9 +14,8 @@ function drawData(oneGeneData){
 	groups.countBorder(transcripts);
 	var geneInfo = [oneGeneData["gene_id"],oneGeneData["gene_name"],oneGeneData["chr"]+" "+groups.start_pos+"~"+groups.end_pos,oneGeneData["strand"]];	
 	
-
 	var count = 0;
-	const y_coor = 80,line_start = 50,verti_length = 920,line_length = 800;
+	const line_start = 50;
 	var geneInfoGroup = svgContainer.append("g");
 	var commonGroup = svgContainer.append("g");
 
@@ -27,6 +27,7 @@ function drawData(oneGeneData){
 		geneInfoGroup.append("text").attr("x", line_start).attr("y", 20*(t+1)).text(geneInfoKey[t]+" : "+geneInfo[t]).attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 
 	}
+
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",175).attr("width",5).attr("height",5).style("fill","#BDA6F9")
 	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 180).text(" : Exon").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",185).attr("width",5).attr("height",5).style("fill","#ECA0C3")
@@ -34,34 +35,61 @@ function drawData(oneGeneData){
 	geneInfoGroup.append("rect").attr("x",line_start).attr("y",195).attr("width",5).attr("height",5).style("fill","#B4C1FF")
 	geneInfoGroup.append("text").attr("x", line_start+5).attr("y", 200).text(" : CDS").attr("font-family", "sans-serif").attr("font-size", "10px").attr("fill", "#0a116f");
 	for(var i = 0 ;i<transcripts.length;i++){
-		drawOneTranscript(transcripts[i],svgContainer,count++,groups);
 		drawInCommonTranscript(transcripts[i],commonGroup,groups);
 	}
+	
+	const div2_height = 300;
 
-	var start_pos = groups.start_pos, end_pos = groups.end_pos;
+	var svg2_height, count = 0;
+	if(transcripts.length*50 >= div2_height){
+		svg2_height = (transcripts.length + 1 )*50
+	}else{
+		svg2_height = div2_height;
+	}
+	document.getElementById("isoform_div").style.display="";
+	document.getElementById("svg2_id").style.display="";
+	d3.select("body").select("#svg2_id").selectAll("svg").remove();
+        
+	var svgContainer2 = d3.select("body").select("#svg2_id").append("svg").attr("width",svg_width).attr("height",svg2_height);
+	    //.attr("viewBox", "0,0,"+svg_width+","+svg2_height)
+	    
+		
+	for(var i = 0 ;i<transcripts.length;i++){
+		drawOneTranscript(transcripts[i],svgContainer2,count++,groups);
+	}
+
+	drawPointerLine(groups,svgContainer2,svg2_height);
+	
+	
+
+}
+function drawPointerLine(groups,svgContainer,height){
+	var start_pos = groups.start_pos, 
+		end_pos = groups.end_pos;
+	const y_coor = 5,verti_length = height-10,line_start = 50,line_length = 800;
 	var axisScale_back = d3.scaleLinear().domain([line_start, line_start+line_length]).range([start_pos,end_pos]);
 
 	var flagGroup = svgContainer.append("g")
 
-	var commonCor = flagGroup.append("rect")
-				.attr("x",line_start-50)
-				.attr("y",158)
-				.attr("width",50)
-				.attr("height",12)
-				.attr("stroke", "black")
-        		.attr("stroke-dasharray","0.9")
-    			.attr("stroke-width", 0)
-    			.attr("fill", "none")
-    			.attr("fill-opacity",0.4)
-    			.style("pointer-events", "none")
+	// var commonCor = flagGroup.append("rect")
+	// 			.attr("x",line_start-50)
+	// 			.attr("y",158)
+	// 			.attr("width",50)
+	// 			.attr("height",12)
+	// 			.attr("stroke", "black")
+ //        		.attr("stroke-dasharray","0.9")
+ //    			.attr("stroke-width", 0)
+ //    			.attr("fill", "none")
+ //    			.attr("fill-opacity",0.4)
+ //    			.style("pointer-events", "none")
 
- 	var commonInfo = flagGroup.append("text")
- 					 .attr("x", line_start-50)
-	                 .attr("y", 170)
-	                 .text(null)
-	                 .attr("font-family", "sans-serif")
-	                 .attr("font-size", "10px")
-	                 .attr("fill", "#0a116f");
+ // 	var commonInfo = flagGroup.append("text")
+ // 					 .attr("x", line_start-50)
+	//                  .attr("y", 170)
+	//                  .text(null)
+	//                  .attr("font-family", "sans-serif")
+	//                  .attr("font-size", "10px")
+	//                  .attr("fill", "#0a116f");
 
 	var commonLine = flagGroup.append("line")
 				.attr("x1", line_start)
@@ -71,34 +99,37 @@ function drawData(oneGeneData){
                 .attr("stroke-width", 0)
                 .attr("stroke", "black")
                 .style("pointer-events", "none")
-
+                .attr("transform", 'translate(0,0)')
     svgContainer.on("mouseover",function(){
-			   		commonLine.attr("stroke-width",0.5)
-			   		commonCor.attr("stroke-width", 0.5)
-			   		
+    				var verti_line = document.getElementById("verti_line");
+    				if(verti_line.checked){
+			   			commonLine.attr("stroke-width",0.5)
+			   			//commonCor.attr("stroke-width", 0.5)
+			   		}
 			   })
 			   .on("mousemove",function(){
-			   		var move = (d3.event.pageX - line_start);
-			   		if(move < 0 || move > line_length){
-			   			commonLine.attr("stroke-width",0)
-			   			commonCor.attr("stroke-width", 0)
-			   			commonInfo.text(null)
-			   		}
-			   		else{
-			   			commonLine.attr("stroke-width",0.5).attr("stroke-dasharray","0.9")
-			   			commonCor.attr("stroke-width", 0.5)
-			   			commonInfo.text(Math.round(axisScale_back(d3.event.pageX)))		   			
-			   			flagGroup.attr("transform","translate("+move+",0)").raise();
-			   			
-			   		}
+			   		var verti_line = document.getElementById("verti_line");
+    				if(verti_line.checked){
+				   		var moveX = (d3.event.pageX - line_start);
+				   		if(moveX < 0 || moveX > line_length){
+				   			commonLine.attr("stroke-width",0)
+				   			//commonCor.attr("stroke-width", 0)
+				   			//commonInfo.text(null)
+				   		}
+				   		else{
+				   			commonLine.attr("stroke-width",0.5).attr("stroke-dasharray","0.9")
+				   			//commonCor.attr("stroke-width", 0.5)
+				   			//commonInfo.text(Math.round(axisScale_back(d3.event.pageX)))		   			
+				   			flagGroup.attr("transform","translate("+moveX+",0)").raise();
+				   			
+				   		}
+				   	}
 			   })
 			   .on("mouseout",function(){
 			   		commonLine.attr("stroke-width",0)
-			   		commonInfo.text(null)
-			   		commonCor.attr("stroke-width", 0)
+			   		//commonInfo.text(null)
+			   		//commonCor.attr("stroke-width", 0)
 			   });           
-	
-
 }
 function groupInfor(){
 	this.group = Array()
@@ -192,7 +223,7 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 }					
 function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
-	var y_coor = 265 + 50 * count;
+	var y_coor = 50 + 50 * count;
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = groups.start_pos,
 		end_pos = groups.end_pos;
