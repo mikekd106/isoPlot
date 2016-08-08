@@ -15,7 +15,7 @@ body {
 div#svg2_id {
     height: 300px;
     width: 1020px;
-    border:0px solid #888;
+    border:1px solid #eee;
     overflow: scroll;
 }
 div#isoform_div{
