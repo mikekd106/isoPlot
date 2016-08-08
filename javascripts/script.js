@@ -420,6 +420,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 						.attr("height",30)
 						.attr("xlink:href","click.png ")
 						.on("mouseover",function(){
+              view.attr("xlink:href","click2.png ")
 							var temp_groups = groups.group;
 							var index = count;
 							for(var i =0;i<temp_groups.length;i++){
@@ -432,6 +433,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							}
 					    })
 					    .on("mouseout",function(){
+                view.attr("xlink:href","click.png ")
 					     	var temp_groups = groups.group
 							for(var i =0;i<temp_groups.length;i++){
 								temp_groups[i].selectAll("rect").attr("stroke-width", 0);

@@ -1,5 +1,7 @@
 body {
   margin:0px;
+  font: 11px sans-serif;
+  color:rgb(10, 17, 111)
 }
 #plot{
   width:100%;
@@ -15,10 +17,12 @@ div#svg2_id {
     width: 1020px;
     border:0px solid #888;
     overflow: scroll;
-    background-color: #F3E1DD;
 }
 div#isoform_div{
-    border:1px solid #888;
+  background-color: #efefff;
+  padding:1%;
+  height:10px;
+
 }
 .tooltip {
   position: absolute;
@@ -129,7 +133,7 @@ input{
 }
 
 .ui-widget{
-  font-size: 0.7em;
+  font-size: 1.0em;
 }
 
 .ui-state-hover,
