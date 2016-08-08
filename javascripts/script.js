@@ -61,8 +61,6 @@ function drawData(oneGeneData){
 
 	drawPointerLine(groups,svgContainer2,5,svg2_height-10,false);
 	
-	
-
 }
 function drawPointerLine(groups,svgContainer,start,length,isCommon){
 	var start_pos = groups.start_pos, 
@@ -216,7 +214,11 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
     var svgLineFunction = d3.line()
     						.x(function(d) {return d.x})
     						.y(function(d) {return d.y});
-    						
+    
+    var svgCurveFunction = d3.line()
+			    .x(function(d) {return d.x})
+			    .y(function(d) {return d.y})
+			    .curve(d3.curveBundle.beta(1));
     
     
     for(var j = 0; j<exonArray.length;j++){
@@ -227,11 +229,22 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
     	coorArray.push(new oneCoor(axisScale(exonArray[j].end),y_coor));
     	coorArray.push(new oneCoor(axisScale((exonArray[j].end+exonArray[j+1].start)/2), y_coor-20));
     	coorArray.push(new oneCoor(axisScale(exonArray[j+1].start),y_coor));
-    	var lineGraph = exonGroup.append("path")
+    	
+    	var lineGraph;
+    	if(document.getElementById("curve").checked){
+    		lineGraph = exonGroup.append("path")		
+									.attr("d", svgCurveFunction(coorArray))
+									.attr("stroke", "#888888")
+									.attr("stroke-width", 1)
+							  		.attr("fill", "none");
+    	}else{
+    		lineGraph = exonGroup.append("path")
                         			.attr("d", svgLineFunction(coorArray))
                         			.attr("stroke", "#888888")
                         			.attr("stroke-width", 1)
                               		.attr("fill", "none");
+    	}
+		
         var rects = exonGroup.selectAll("rect").filter(function(d,i){return i===j || i===(j+1)});
         groups.addOneConnect(exonArray[j].exon_id,exonArray[j+1].exon_id,lineGraph,rects);
     }

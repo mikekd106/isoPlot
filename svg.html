@@ -14,6 +14,7 @@
 </head>
 <body> 
 	<script type="text/javascript">
+		var data_now;
 		function renewGene(index){
 			var temp = Array();
 			function addOptions(element, index, array){
@@ -23,6 +24,7 @@
 			document.getElementById("autocomplete-gene").placeholder = "input Gene name or ID";
 			d3.json("BDGP6.json",function(error,data){
 				data.forEach(addOptions);
+				options = temp;
 				$( "#autocomplete-gene" ).autocomplete({
 	               source: function(request, response) {
 				        var results = $.ui.autocomplete.filter(temp, request.term);
@@ -34,6 +36,7 @@
 	               autoFocus:true,
 	               select:function(event,ui){
 	               		var index = temp.indexOf(ui.item.value);
+	               		data_now = data[Math.floor(index/2)];
 	               		drawData(data[Math.floor(index/2)]);
 	               }
 	            });
@@ -41,13 +44,16 @@
 				      if (e.keyCode === 13) { // 13 === enter
 				      		if(temp.length > 0){
 								var geneIndex = temp.indexOf(document.getElementById("autocomplete-gene").value); 
-								if(geneIndex === -1)
+								if(geneIndex === -1){
 									if(document.getElementById("autocomplete-gene").value === "")
 										alert("choose one Gene")
 									else
 										alert("Gene not found");
-								else
+								}
+								else{
+									data_now = data[Math.floor(geneIndex/2)];
 									drawData(data[Math.floor(geneIndex/2)]);
+								}
 				      		}
 					  }
 				});
@@ -58,7 +64,9 @@
 			});
 			
 		}
-		 
+		function renewOverview(){
+			drawData(data_now);
+		}
 	</script>
 	<div class="div_class">
 		<select id="version" onchange="renewGene(this.value)">
@@ -68,7 +76,7 @@
 	    <label for="autocomplete-gene">Gene_ID: </label>
 	    <input id="autocomplete-gene" placeholder="choose one version">
 	    <input type="checkbox" id="verti_line" checked> display vertical line 
-	    <!-- <input type="checkbox" id="arc" > use arc line  -->
+	    <input type="checkbox" id="curve" onchange="renewOverview()" checked > use curve 
 		<br>
 	</div>
 	<div class="div_class" id = "svg1_id" style="height:240px"></div>
