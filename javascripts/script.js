@@ -383,7 +383,7 @@ function drawOneTranscript(oneTranscript,oneSvgContainer,count,groups){
 							       				.sort(sortItems)
 							       				.transition()
 							       				.delay(function (d, i) {
-											        return i * 100;
+											        return i * 200;
 											    })
 							       				.duration(500)
 							       				.attr('x',0)
