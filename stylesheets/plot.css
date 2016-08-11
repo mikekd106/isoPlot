@@ -13,10 +13,11 @@ body {
 }*/
 
 div#svg2_id {
-    height: 300px;
+    height: 350px;
     width: 1020px;
     border:1px solid #eee;
     overflow: scroll;
+
 }
 div#isoform_div{
   background-color: #efefff;

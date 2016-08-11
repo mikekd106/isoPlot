@@ -39,11 +39,11 @@ function drawData(oneGeneData){
 	}
 	drawPointerLine(groups,svgContainer,100,80,true);
 
-	const div2_height = 300;
+	const div2_height = 350,one_block_height = 70;
 
 	var svg2_height, count = 0;
-	if(transcripts.length*50 >= div2_height){
-		svg2_height = (transcripts.length + 1 )*50
+	if(transcripts.length*70 >= div2_height){
+		svg2_height = (transcripts.length +1)*70
 	}else{
 		svg2_height = div2_height;
 	}
@@ -54,10 +54,15 @@ function drawData(oneGeneData){
 	var svgContainer2 = d3.select("body").select("#svg2_id").append("svg").attr("width",svg_width).attr("height",svg2_height);
 	    //.attr("viewBox", "0,0,"+svg_width+","+svg2_height)
 	    
-		
-	for(var i = 0 ;i<transcripts.length;i++){
-		drawOneTranscript(transcripts[i],svgContainer2,count++,groups);
-	}
+	var transcriptsContaniner = svgContainer2.selectAll("svg").data(transcripts).enter().append("svg")
+									.attr("width",svg_width)
+    								.attr("height",one_block_height)
+    								.attr("x",0)
+    								.attr("y",function(d,i){return 70*i})
+    								.each(function(d,i){
+    									var thatContainer = d3.select(this);
+    									drawOneTranscript(transcripts[i],thatContainer,i,groups);
+    								});
 
 	drawPointerLine(groups,svgContainer2,5,svg2_height-10,false);
 	
@@ -254,9 +259,9 @@ function drawInCommonTranscript(oneTranscript,commonGroup,groups){
 
 
 }					
-function drawOneTranscript(oneTranscript,svgContainer,count,groups){
+function drawOneTranscript(oneTranscript,oneSvgContainer,count,groups){
 	const line_start = 50,line_length = 800, rect_height = 30;
-	var y_coor = 50 + 50 * count;
+	var y_coor = 50 ;
 	var transcript_id = oneTranscript["transcript_id"],
 		start_pos = groups.start_pos,
 		end_pos = groups.end_pos;
@@ -271,7 +276,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
     			.attr("class", "tooltip")
     			.style("display", "none");
 
-    var oneTranscriptGroup = svgContainer.append("g");
+    
+    var oneTranscriptGroup = oneSvgContainer.append("g");
     var id = oneTranscriptGroup.append("text")
  					 .attr("x", line_start)
 	                 .attr("y", y_coor - rect_height/2 - 5)
@@ -302,12 +308,13 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 				                   .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
 	    						   .attr("height",rect_height)
 	    						   .style("fill",function(d){return "#BDA6F9"})
+	    						   .attr("class",function(d){return d.exon_id})
 	    						   .on("mouseover", function(d){
 	    						   		div.style("display", "inline");
 	    						   		d3.select(this)
 	                				   		  .attr("stroke-width", 1.5)
 	                       				  .attr("stroke", "#8b64f7");
-	                       				  //.attr('stroke-alignment',"outer");
+
 	                       				var temp_map = groups.exonConnectMap;
 	                       				var set = temp_map.entries();
 
@@ -348,6 +355,42 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 	                   						temp[1].rects.attr("stroke-width",0);	
 	                       				}
 							       })
+							       .on("click",function(d){
+							       		var transcriptId = transcript_id;
+							       		var sortItems = function(a,b){
+											var prior_one = 0,prior_two = 0;
+											if(a.transcript_id === transcriptId){
+												prior_one = 2;
+												if(checkIdExit(b.exons,d.exon_id,"exon"))
+													prior_two = 1;	
+											}
+											else if(b.transcript_id === transcriptId){
+												prior_two = 2;
+												if(checkIdExit(a.exons,d.exon_id,"exon"))
+													prior_one = 1;
+											}
+											else{
+												if(checkIdExit(a.exons,d.exon_id,"exon"))
+													prior_one = 1;
+												if(checkIdExit(b.exons,d.exon_id,"exon"))
+													prior_two = 1;
+											}
+											
+											return prior_two - prior_one;
+
+										}
+							       		d3.select("#svg2_id").select("svg").selectAll("svg")
+							       				.sort(sortItems)
+							       				.transition()
+							       				.delay(function (d, i) {
+											        return i * 100;
+											    })
+							       				.duration(500)
+							       				.attr('x',0)
+							       				.attr('y',function(d,i){
+							       					return i*70
+							       				});
+							       })
 	}
 	if(utrArray.length>0){
 	    //create UTRs in one transcript
@@ -358,8 +401,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 									.append("rect");
 		var utrsAttributes = utrs.attr("x",function(d){return axisScale(d.start)})
 	    						 .attr("ry",2)
-	                 .attr("rx",2)
-	                 .attr("y",y_coor)
+				                 .attr("rx",2)
+				                 .attr("y",y_coor)
 	    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
 	    						 .attr("height",rect_height/2)
 	    						 .style("fill",function(d){return "#ECA0C3"})
@@ -390,8 +433,8 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 									.append("rect");
 		var cdssAttributes = cdss.attr("x",function(d){return axisScale(d.start)})
 	    						 .attr("ry",2)
-	                 .attr("rx",2)
-	                 .attr("y",y_coor)
+				                 .attr("rx",2)
+				                 .attr("y",y_coor)
 	    						 .attr("width",function(d){return axisScale(d.end) - axisScale(d.start)})
 	    						 .attr("height",rect_height/2)
 	    						 .style("fill",function(d){return "#B4C1FF"})
@@ -420,7 +463,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 						.attr("height",30)
 						.attr("xlink:href","click.png ")
 						.on("mouseover",function(){
-              view.attr("xlink:href","click2.png ")
+              				view.attr("xlink:href","click2.png ")
 							var temp_groups = groups.group;
 							var index = count;
 							for(var i =0;i<temp_groups.length;i++){
@@ -433,7 +476,7 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 							}
 					    })
 					    .on("mouseout",function(){
-                view.attr("xlink:href","click.png ")
+                			view.attr("xlink:href","click.png ")
 					     	var temp_groups = groups.group
 							for(var i =0;i<temp_groups.length;i++){
 								temp_groups[i].selectAll("rect").attr("stroke-width", 0);
@@ -442,12 +485,17 @@ function drawOneTranscript(oneTranscript,svgContainer,count,groups){
 					   		
 					    })
 
-	function checkIdExit(arr, val) {
-	    return arr.some(function(arrVal) {
-	        return val === arrVal;
-	    });
+	function checkIdExit(arr, val, type) {
+	    if(arguments.length === 2){
+		    return arr.some(function(arrVal) {
+		        return val === arrVal;
+		    });
+		}else if(arguments.length === 3){
+			return arr.some(function(arrVal) {
+		        return val === arrVal.exon_id;
+		    });
+		}
 	}
-
 }
 
 
