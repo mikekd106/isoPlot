@@ -1,3 +1,4 @@
+/* boxplotScript.js | Copyright 2017, isoPlot. | MIT Licensed */
 var colorPicker = ["#90C3D4","#C390D4","#D4A190","#A1D490"];
 var map = {AAEL:'AA',AGAP:'AG',CPIJ:'CQ',FBgn:'DM'};
 var flags = [];
