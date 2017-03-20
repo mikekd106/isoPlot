@@ -2,7 +2,7 @@
 Isoplot is a publicly available database with visualization for exploration of alternative splicing events in mosquitoes, click the mosquito to visit our site. 
 <p align="center"><a href="http://isoplot.iis.sinica.edu.tw/"><img width=12.5% src="https://github.com/mikekd106/isoPlot/blob/master/purplemos.png"></a></p>
 
-##Scripts
+## Scripts
 
 <b>script.js:</b> D3 code for the 'Isoform' section.<br>
 <b>boxplotScript.js:</b> modification for Ploty boxplot<br>
