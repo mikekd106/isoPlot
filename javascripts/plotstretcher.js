@@ -1,3 +1,4 @@
+/* plotstretcher.js | Copyright 2017, isoPlot. | MIT Licensed */
 function plot(file,container,ay1,ay2,tranA,tranB){
 //r zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
 var filename=file;
