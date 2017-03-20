@@ -1,0 +1,25 @@
+.slidewindow{
+    position: absolute;
+    float: right;
+    overflow: auto;
+    z-index: 1000; 
+    left: 500px;
+    height:1000px; 
+	width:340px;  
+}
+ 
+@media all and (max-width: 700px) {
+    .slidewindow { display: none; }
+}
+
+.welcome{
+    border-radius: 5px;
+    width:100%;
+    padding:20px;
+    line-height:1.5;
+    font-size:15px;
+    text-align: justify;
+   background:rgba(90, 113, 223,0.05)
+
+
+}

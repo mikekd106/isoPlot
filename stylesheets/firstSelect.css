@@ -1,0 +1,21 @@
+body {
+
+	font-family: 'Dosis', sans-serif;
+  	font-size: 13px;
+}
+
+
+input.firstPageButton{
+
+	width: 200px;
+	height: 20px;
+	background-color: rgb(255,255,255);
+	color: #7a91ff;
+}
+
+.custom-ui-widget-header-warning {
+  background: #EBCCCC;
+  font-size: 1em;
+}
+
+
