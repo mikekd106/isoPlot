@@ -1,8 +1,4 @@
-/**
-* heat_map.js
-* Copyright 2017, isoPlot.
-* Licensed under the MIT license
-*/
+/* heat_map.js | Copyright 2017, isoPlot. | MIT Licensed */
 function heatmap_display(columnsID, rowsID, heatmapId) {
   for(var i= columnsID.length - 1; i >= 0; i--){
     if( 
