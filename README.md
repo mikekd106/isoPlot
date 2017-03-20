@@ -3,7 +3,7 @@ Isoplot is a publicly available database with visualization for exploration of a
 <p align="center"><a href="http://isoplot.iis.sinica.edu.tw/"><img width=12.5% src="https://github.com/mikekd106/isoPlot/blob/master/purplemos.png"></a></p>
 
 ## D3 scripts
-
-boxplotScript.js: 
-heat_map.js:
-plotstretcher.js: 
+script.js: D3 code for the 'Isoform' section.<br>
+boxplotScript.js: modification for Ploty boxplot<br>
+heat_map.js: D3 code for the 'Pairwise sequence identity of transcripts' section.<br>
+plotstretcher.js: D3 code for the visualization of Stretcher alignment results.<br>
