@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<!-- <meta http-equiv="X-Frame-Options" content="ALLOW-FROM http://flybase.org"> -->
+	<title>single species</title>
+	<link href="https://fonts.googleapis.com/css?family=Dosis|Kavoon" rel="stylesheet">
+	<script type='text/javascript' src='https://d3js.org/d3.v4.min.js'></script>
+	<link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script type='text/javascript' src='javascripts/jquery.pwstabs.js'></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/jquery.pwstabs.css">
+    <script type="text/javascript" src="javascripts/plotly.js"></script>
+    <link rel='stylesheet' type='text/css' href='stylesheets/plot.css'/>
+    <link rel='stylesheet' type='text/css' href='stylesheets/jquery.tree-multiselect.min.css'/>
+    <link rel="stylesheet" type='text/css' href="stylesheets/heatmap.css" />
+	<script type="text/javascript" src="javascripts/heat_map.js"></script>
+	<script type="text/javascript" src='javascripts/boxplotScript.js'></script>
+	<script type='text/javascript' src='javascripts/script.js'></script>
+	<script type="text/javascript" src="javascripts/jquery.tree-multiselect.min.js"></script>
+	<script type='text/javascript' src='javascripts/mannwhitneyu.js'></script>
+	<script type='text/javascript' src='javascripts/plotstretcher.js'></script>
+	<!-- <link rel='stylesheet' type='text/css' href='stylesheets/table.css'/> -->
+</head>
+<body>
+	
+	
+	<br>
+	<div id = "isoFormTable">
+		<div data-pws-tab="gene1" data-pws-tab-name="FBgnXXXX">the first tab</div>
+		<div data-pws-tab="gene2" data-pws-tab-name="AGAPXXXX">the second tab</div>
+		<div data-pws-tab="gene3" data-pws-tab-name="AAELXXXX">the third tab</div>
+	</div>
+		<div id="tooltip" class="hidden">
+	        <p><span id="value"></p>
+	</div>
+	<div style='height:300px; margin-top:100px;
+	padding:5px;position:fixed;top:382px;left:900px'>
+	<div style='background: rgba(122, 145, 255,0.05);padding:15px;font-size:15px;line-height:1.2;width:293px;border-radius:
+	5px;'><span 
+	style='color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5'><img
+	style="width:25px; vertical-align:text-top;" src="purplemos.png">
+	Interact with <span
+	style="font-family:'Kavoon',cursive;">IsoPlot</span></span><br><br>&bull; 
+	&nbsp; Hover an exon to highlight all its neighboring exons in
+	overview.<br><br>
+	&bull; &nbsp;  Click an exon to move all the transcripts which contain
+	that exon to the top.<br><br> &bull; &nbsp; Hover <img style="width:20px;
+	vertical-align:text-bottom;margin:0 2px;"
+	src="click.png"> to highlight the transcript in overview.<br><br>
+	&bull;  &nbsp; Click <img style="width:20px; 
+	vertical-align:text-bottom;margin:0 2px;"
+	src="click.png"> to highlight the transcript in expression view below.
+	<br><br></div>
+	</div>  
+
+
+
+	
+	<script type="text/javascript">
+		
+		var urlGenes = "http://isoplot.iis.sinica.edu.tw/find_gene?gene_name=";
+		var selectedGenes = [];
+		for (var i = 0;i<localStorage.length; i++){
+		    selectedGenes.push(localStorage.key(i))
+		}
+		$(document).ready(function(){
+
+			renewview();
+			 $('#isoFormTable').pwstabs({
+
+			 	effect:'scale',
+			 	defaultTab:1,
+			 	containerWidth:'100%',
+			 	tabsPosition:'horizontal',
+			 	horizontalPosition:'top',
+			 	theme:'pws_theme_purple'
+			 });
+		})
+
+		function renewview(){
+			var result = $("#isoFormTable");
+			result.children().remove('div');
+			for(var i = 0;i<selectedGenes.length;i++){
+				var oneDiv ='<p style="font-weight: bold;">Gene annotation</p>'+
+				'<div class="div_class" id = "svgOverview'+i+'" style="height:230px"></div>'+
+							'<div style="font-size:13px; margin-left: 600px;margin-bottom: 30px;"><input type="checkbox" id="verti_line'+i+'" checked >show genomic coordinates on hover<input type="checkbox" id="curve'+i+'" onchange="renewCurveview(this)" checked >curved connector </div>'+
+'<p style="font-size:15px; -webkit-margin-after: 0px;"><span style="color:#BDA6F9; font-size:23px;">&nbsp&nbsp&nbsp&#9632 </span>Exon&nbsp&nbsp&nbsp&nbsp<span style="color:#ECA0C3;font-size:23px;">&#9632</span>: UTR&nbsp&nbsp&nbsp&nbsp<span style="color:#B4C1FF;font-size:23px;">&#9632</span>: CDS&nbsp&nbsp&nbsp&nbsp<span style="color:#FFE1A8;font-size:23px;">&#9632</span>: Novel transcripts assembled by StringTie&nbsp&nbsp&nbsp&nbsp<span style="color:#C6C7C4;font-size:23px;">&#9632</span>: Transcriptional active regions (TARs)<br></p>'
++
+
+							
+							'<div class="div_class2" id = "isoform_div'+i+'" style="height:10px;font-weight: bold;">'+
+								'<img src="arrows.png" style="width:10px;height:10px;vertical-align: middle;"><span style="height: 10px;"> Isoforms</span>'+
+							'</div>'+
+							
+							'<div class="div_class3" id = "svgDetail'+i+'" style=""></div>'+
+							'</div>'+
+							                                            
+							
+							'<div class="div_class2" id="boxplot_div'+i+'"style="height:10px;font-weight:bold;">'+'<span style="height:10px;">'+'&nbsp;'+' Transcript-level expression of RNA-seq experiments</span>'+'</div>'+
+							'<div class="div_samples" id = "sampleDetail'+i+'">'+
+							'<div class="div_boxplot" id = "boxplotDetail'+i+'"></div>'+
+							'<br><div style=" position: absolute; top: 1010px; left: 907px; width:300px;height:200px;padding: 15px;overflow: auto;"><p style="margin:5px;margin-bottom:10px;font-size:medium;"> Analysis of differentially expressed transcripts in each stage. <span title="This calculator conducts a two-sided Wilcoxon Rank Sum test for two independent samples: FPKM values of a transcript and those of the other transcripts.\nMeaning of asterisks:\n ***: p-value<0.005 \n **  : p-value<0.01 \n *   : p-value<0.05 \nns: p-value>=0.05\nNA: not available" style="cursor:help;color:#7A91FF;"><u>More.</u></span></p> <table style=" font-size: 13px;"><col width="100"><col width="40">  <col width="40">  <col width="40">  <col width="40"><thead id="thead'+i+'"></thead><tbody id="tbody'+i+'"></tbody></table></div>'+
+							'<div class="selectbox" id="selectbox'+i+'"style="position: absolute; left: 909px; top: 780px;"><p> >>Select samples and click submit to regenerate boxplot</p>'+
+							'<select id = "samplesChoose'+i+'" multiple="multiple"></select>'+
+							'<input	id="box_button'+i+'" type="button" value="submit" style="padding:5px;border:2px blue none;background-color:pink;"></div>'+
+							'<div class="group"><div class="div_class2" id="boxplot_div'+i+'"style="height:10px;font-weight:bold;">'+
+							'<span style="height:10px;">'+'&nbsp;'+' Pairwise sequence identity of transcripts</span>'+'</div>'+ 
+							'<div class="div_heatmap" id="heatmap'+i+'"></div>'+
+							
+							'<div style="margin:5px;padding:5px;font-size:14px;line-height:1.3;width:300px;height:300px;padding:5px;float:left; padding:15px;border-radius:5px;background: rgba(122, 145, 255,0.05);">'+
+							'<span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5">'+
+							'<img style="width:25px; vertical-align:text-top;" src="purplemos.png">Interact with <span style="font-family:"Kavoon",cursive;">IsoPlot</span></span><br>'+
+							'<br>&bull; &nbsp; Click atranscript ID to sort the column or row by identity score.<br><br>'+
+							'<span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5"><img style="width:25px;vertical-align:text-top;"src="purplemos.png">Download alignment result</span>'+
+							'<br><br>&bull;  &nbsp;Click a cell in the heat map and "Download" to download the alignment result of the selected transcript pair.<br><br>Selected transcripts:<br>'+
+							'<span id="transcriptA'+i+'"	style="color:#3c2dd1">None</span><br><span id="transcriptB'+i+'" style="color:#3c2dd1">None</span><br>'+
+							'<input id="download_btn'+i+'" type="button"	value="Download" style="padding:5px;border:2px blue none;background-color:pink;"><br><br></div>'+ '<div style="width:900px;color:#7a91ff;font-weight:bold;font-size:16px;line-height:2.5"><br></div>'+
+							'<div class="div_heatTrans" id="speTrans'+i+'"><img style="width:25px; vertical-align:text-top;" src="purplemos.png"><span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5">Select and click a cell in the heat map to visualize the alignment result</span><p style="font-size:15px;"><span style="color:#FFE1A8; font-size:23px;">&nbsp&nbsp&nbsp&#9632 </span>Match&nbsp&nbsp&nbsp&nbsp<span style="color:#f975b2;font-size:23px;">&#9632</span>: Mismatch&nbsp&nbsp&nbsp&nbsp<span style="color:#C6C7C4;font-size:23px;">&#9632</span>: Gap&nbsp&nbsp&nbsp&nbsp<span style="color:#2d0acc;font-weight: bold;">&#8210</span>/<span style="color:#D5D9FD;font-size:23px;">&#9632</span>: Intron&nbsp&nbsp<br><span style="line-height:2.5;">&nbsp&nbsp&nbsp[Scroll above to zoom in/out; Drag and drop to move the result arround; Click to autoscale]</span></p></div></div>'
+							;
+
+				$('<div>',{
+					'data-pws-tab':"ortho_"+i,
+					'data-pws-tab-name':selectedGenes[i]
+				}).append(oneDiv).appendTo(result);
+
+				$('#isoform_div'+i).click(function(e){
+				  e.preventDefault();
+				  //$(this).next("div").slideToggle();
+
+      if($(this).next("div").hasClass("toggled")) {
+         $(this).next("div").animate({"height": "350px"}).removeClass("toggled");
+      } else {
+        $(this).next("div").animate({"height": "630px"}).addClass("toggled");
+      }
+				});
+
+				d3.json(urlGenes+selectedGenes[i]+"&index="+i,function(error,genedata){
+					drawData(genedata,genedata.index)
+					drawBoxPlot(genedata,genedata.index)
+					drawHeatMap(genedata,genedata.index)
+				});
+	
+			}	
+
+		}
+
+		function renewCurveview(oneGene){
+			var index = oneGene.getAttribute('id').substr(5)
+			
+			d3.json(urlGenes+selectedGenes[index]+"&index="+index,function(error,genedata){
+				drawData(genedata,genedata.index);
+			});
+		}
+
+		function drawHeatMap(genedata,index){
+			var columnsID = [],rowsID = [];
+			var geneName = genedata.gene_id
+			if(localStorage.length > 1){
+				for ( var i = 0 ; i < localStorage.length; i++ ) {
+					if(localStorage.key(i) === geneName){
+						columnsID = localStorage.getItem(geneName).split(',');
+					}
+					else{		
+						rowsID = rowsID.concat(localStorage.getItem(localStorage.key(i)).split(','))
+					}
+				}
+				heatmap_display(columnsID,rowsID, "#heatmap"+index);	
+			}
+
+		}
+
+
+
+	</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+    Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        
+          ga('create', 'UA-88670245-1', 'auto');
+            ga('send', 'pageview');
+            
+            </script>
+	
+</body>
+</html>
