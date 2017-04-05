@@ -106,7 +106,7 @@ function beginDraw(boxPlotDatas,index){
 
 function drawBoxPlot(oneGeneData,index){
 	flags.push(0)
-	var urlAllSamples = "http://isoplot.iis.sinica.edu.tw/find_allSamples?species=";
+	var urlAllSamples = "";
 	var spe = map[oneGeneData.gene_id.substr(0,4)]
 	d3.json(urlAllSamples+spe,function(error,samplesData){
 		var keys = [];
