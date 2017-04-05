@@ -55,8 +55,8 @@ var loadtext=loading.append('text').text('Loading a large document, might take s
 
 
 
-    var urlAlign = "http://isoplot.iis.sinica.edu.tw/find_align?columnsID="
-    var urlAlignFile = 'http://isoplot.iis.sinica.edu.tw/find_alignfile?'
+    var urlAlign = ""
+    var urlAlignFile = ''
     d3.json(urlAlign + columnsID + "&rowsID=" + rowsID, function(error, data) {
         d3.select(heatmapId).selectAll("svg").remove()
 
@@ -309,7 +309,7 @@ var loadtext=loading.append('text').text('Loading a large document, might take s
         }
 
         $("#download_btn" + heatmapId.substr(8)).click(function() {
-            var urlGenes = "http://isoplot.iis.sinica.edu.tw/find_gene?gene_name=";
+            var urlGenes = "";
             var index = heatmapId.substr(8);
             var tranA = document.getElementById("transcriptA" + index).innerHTML;
             var tranB = document.getElementById("transcriptB" + index).innerHTML;
