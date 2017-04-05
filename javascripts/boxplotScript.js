@@ -10,7 +10,7 @@ function beginDrawBoxPlot(keys,oneGeneData,index){
 	      .attr("font-family", "'Dosis', sans-serif").attr("font-size", "18px").attr("fill", "#0a116f")
 	      .attr('x',5).attr('y',200).attr('width',400).attr('height',100)
 
-	var urlFpkm = "http://isoplot.iis.sinica.edu.tw/find_fpkm?trans_ID=";
+	var urlFpkm = "";
 	var transcript_id = [];
 	var transcripts = oneGeneData["transcript"];
 	var samples = $("#samplesChoose"+index).val();
