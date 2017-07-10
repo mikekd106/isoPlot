@@ -22,9 +22,9 @@
 	<script type='text/javascript' src='javascripts/mannwhitneyu.js'></script>
 	<script type='text/javascript' src='javascripts/plotstretcher.js'></script>
 	<!-- <link rel='stylesheet' type='text/css' href='stylesheets/table.css'/> -->
+
 </head>
 <body>
-	
 	
 	<br>
 	<div id = "isoFormTable">
@@ -60,7 +60,7 @@
 	
 	<script type="text/javascript">
 		
-		var urlGenes = "http://isoplot.iis.sinica.edu.tw/find_gene?gene_name=";
+		var urlGenes = "";
 		var selectedGenes = [];
 		for (var i = 0;i<localStorage.length; i++){
 		    selectedGenes.push(localStorage.key(i))
@@ -99,12 +99,11 @@
 							                                            
 							
 							'<div class="div_class2" id="boxplot_div'+i+'"style="height:10px;font-weight:bold;">'+'<span style="height:10px;">'+'&nbsp;'+' Transcript-level expression of RNA-seq experiments</span>'+'</div>'+
-							'<div class="div_samples" id = "sampleDetail'+i+'">'+
-							'<div class="div_boxplot" id = "boxplotDetail'+i+'"></div>'+
-							'<br><div style=" position: absolute; top: 1010px; left: 907px; width:300px;height:200px;padding: 15px;overflow: auto;"><p style="margin:5px;margin-bottom:10px;font-size:medium;"> Analysis of differentially expressed transcripts in each stage. <span title="This calculator conducts a two-sided Wilcoxon Rank Sum test for two independent samples: FPKM values of a transcript and those of the other transcripts.\nMeaning of asterisks:\n ***: p-value<0.005 \n **  : p-value<0.01 \n *   : p-value<0.05 \nns: p-value>=0.05\nNA: not available" style="cursor:help;color:#7A91FF;"><u>More.</u></span></p> <table style=" font-size: 13px;"><col width="100"><col width="40">  <col width="40">  <col width="40">  <col width="40"><thead id="thead'+i+'"></thead><tbody id="tbody'+i+'"></tbody></table></div>'+
+							'<div class="div_samples" id = "sampleDetail'+i+'">'+'<div class="div_boxplot" id ="boxplotDetail'+i+'"></div>'+'<input id="box_dlbutton'+i+'" type="button" value="Download expression data" style="position:absolute; top:980px; left: 908px;overflow:auto;padding:5px;border:2px;yellow;background-color:#EEFFCC;cursor:pointer;">'+
+							'<br><div style=" position: absolute; top: 1010px; left: 907px; width:300px;height:200px;padding: 15px;overflow: auto;"><p style="margin:5px;margin-bottom:10px;font-size:medium;"> Analysis of differentially expressed transcripts in each stage. <span title="This calculator conducts a two-sided Wilcoxon Rank Sum test for two independent samples: FPKM values of a transcript and those of the other transcripts.\nMeaning of asterisks:\n ***: p-value<0.005 \n **  : p-value<0.01 \n *   : p-value<0.05 \nns: p-value>=0.05\nNA: not available" style="cursor:help;color:#7A91FF;"><a href="http://isoplot.iis.sinica.edu.tw/tutorial.html" target="_new" style="cursor: help;"><u>More.</u></a></span></p> <table style=" font-size: 13px;"><col width="100"><col width="40">  <col width="40">  <col width="40">  <col width="40"><thead id="thead'+i+'"></thead><tbody id="tbody'+i+'"></tbody></table></div>'+
 							'<div class="selectbox" id="selectbox'+i+'"style="position: absolute; left: 909px; top: 780px;"><p> >>Select samples and click submit to regenerate boxplot</p>'+
 							'<select id = "samplesChoose'+i+'" multiple="multiple"></select>'+
-							'<input	id="box_button'+i+'" type="button" value="submit" style="padding:5px;border:2px blue none;background-color:pink;"></div>'+
+							'<input	id="box_button'+i+'" type="button" value="submit" style="padding:5px;border:2px blue none;background-color:pink;cursor:pointer;"></div>'+
 							'<div class="group"><div class="div_class2" id="boxplot_div'+i+'"style="height:10px;font-weight:bold;">'+
 							'<span style="height:10px;">'+'&nbsp;'+' Pairwise sequence identity of transcripts</span>'+'</div>'+ 
 							'<div class="div_heatmap" id="heatmap'+i+'"></div>'+
@@ -112,11 +111,11 @@
 							'<div style="margin:5px;padding:5px;font-size:14px;line-height:1.3;width:300px;height:300px;padding:5px;float:left; padding:15px;border-radius:5px;background: rgba(122, 145, 255,0.05);">'+
 							'<span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5">'+
 							'<img style="width:25px; vertical-align:text-top;" src="purplemos.png">Interact with <span style="font-family:"Kavoon",cursive;">IsoPlot</span></span><br>'+
-							'<br>&bull; &nbsp; Click atranscript ID to sort the column or row by identity score.<br><br>'+
+							'<br>&bull; &nbsp; Click a transcript ID to sort the column or row by identity.<br><br>'+
 							'<span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5"><img style="width:25px;vertical-align:text-top;"src="purplemos.png">Download alignment result</span>'+
 							'<br><br>&bull;  &nbsp;Click a cell in the heat map and "Download" to download the alignment result of the selected transcript pair.<br><br>Selected transcripts:<br>'+
 							'<span id="transcriptA'+i+'"	style="color:#3c2dd1">None</span><br><span id="transcriptB'+i+'" style="color:#3c2dd1">None</span><br>'+
-							'<input id="download_btn'+i+'" type="button"	value="Download" style="padding:5px;border:2px blue none;background-color:pink;"><br><br></div>'+ '<div style="width:900px;color:#7a91ff;font-weight:bold;font-size:16px;line-height:2.5"><br></div>'+
+							'<input id="download_btn'+i+'" type="button"	value="Download" style="padding:5px;border:2px blue none;background-color:pink;cursor:pointer;"><br><br></div>'+ '<div style="width:900px;color:#7a91ff;font-weight:bold;font-size:16px;line-height:2.5"><br></div>'+
 							'<div class="div_heatTrans" id="speTrans'+i+'"><img style="width:25px; vertical-align:text-top;" src="purplemos.png"><span style="color:#7a91ff;font-weight:bold;font-size:16px;line-height:1.5">Select and click a cell in the heat map to visualize the alignment result</span><p style="font-size:15px;"><span style="color:#FFE1A8; font-size:23px;">&nbsp&nbsp&nbsp&#9632 </span>Match&nbsp&nbsp&nbsp&nbsp<span style="color:#f975b2;font-size:23px;">&#9632</span>: Mismatch&nbsp&nbsp&nbsp&nbsp<span style="color:#C6C7C4;font-size:23px;">&#9632</span>: Gap&nbsp&nbsp&nbsp&nbsp<span style="color:#2d0acc;font-weight: bold;">&#8210</span>/<span style="color:#D5D9FD;font-size:23px;">&#9632</span>: Intron&nbsp&nbsp<br><span style="line-height:2.5;">&nbsp&nbsp&nbsp[Scroll above to zoom in/out; Drag and drop to move the result arround; Click to autoscale]</span></p></div></div>'
 							;
 
